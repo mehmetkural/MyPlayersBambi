@@ -1,0 +1,74 @@
+{
+  "nav": {
+    "rate": "Bewerten",
+    "leaderboard": "Rangliste",
+    "teams": "Teams",
+    "signOut": "Abmelden"
+  },
+  "auth": {
+    "title": "MyPlayers",
+    "subtitle": "Deine wöchentliche Fußballgruppe",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "name": "Dein Name",
+    "namePlaceholder": "Vor- und Nachname",
+    "switchToSignUp": "Kein Konto? Registrieren",
+    "switchToSignIn": "Schon ein Konto? Anmelden",
+    "loading": "Lädt...",
+    "errorInvalid": "Ungültige E-Mail oder Passwort.",
+    "errorGeneric": "Etwas ist schiefgelaufen. Erneut versuchen."
+  },
+  "rate": {
+    "title": "Spieler bewerten",
+    "subtitle": "Du kannst jeden Spieler nur einmal bewerten",
+    "speed": "Geschwindigkeit",
+    "agility": "Wendigkeit",
+    "passing": "Passspiel",
+    "shooting": "Schuss",
+    "defense": "Abwehr",
+    "goalkeeping": "Torwart",
+    "submit": "Bewertung speichern",
+    "submitted": "Bewertet",
+    "noPlayers": "Keine weiteren Spieler zu bewerten.",
+    "loading": "Lädt...",
+    "successMsg": "Bewertung gespeichert!",
+    "errorMsg": "Etwas ist schiefgelaufen."
+  },
+  "leaderboard": {
+    "title": "Rangliste",
+    "subtitle": "Gesamtrangliste basierend auf allen Bewertungen",
+    "overall": "Gesamt",
+    "speed": "Geschwindigkeit",
+    "agility": "Wendigkeit",
+    "passing": "Passspiel",
+    "shooting": "Schuss",
+    "defense": "Abwehr",
+    "goalkeeping": "Torwart",
+    "noData": "Noch keine Bewertungen.",
+    "rank": "Rang",
+    "player": "Spieler",
+    "score": "Punkte",
+    "ratings": "Bewertungen"
+  },
+  "teams": {
+    "title": "Teams zusammenstellen",
+    "subtitle": "Ausgeglichene Teams basierend auf Spielerwertungen",
+    "lockedTitle": "Teambuilder noch nicht verfügbar",
+    "lockedDesc": "Diese Funktion wird freigeschaltet, wenn mindestens 10 Spieler registriert sind.",
+    "currentPlayers": "Aktuell {count} Spieler registriert.",
+    "format": "Format wählen",
+    "generateTeams": "Teams erstellen",
+    "regenerate": "Neu erstellen",
+    "teamA": "Team A",
+    "teamB": "Team B",
+    "avgScore": "Durchschn. Punkte",
+    "unassigned": "Nicht zugeteilt",
+    "unassignedDesc": "Diese Spieler passten nicht ins gewählte Format",
+    "notEnoughRated": "Nicht genug Bewertungen für ausgeglichene Teams — zufällig verteilt."
+  },
+  "common": {
+    "appName": "MyPlayers"
+  }
+}

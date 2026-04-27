@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --green: #22c55e;
+  --green-dark: #16a34a;
+}

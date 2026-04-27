@@ -1,0 +1,74 @@
+{
+  "nav": {
+    "rate": "Puanla",
+    "leaderboard": "Sıralama",
+    "teams": "Takımlar",
+    "signOut": "Çıkış"
+  },
+  "auth": {
+    "title": "MyPlayers",
+    "subtitle": "Haftalık futbol grubun",
+    "signIn": "Giriş Yap",
+    "signUp": "Kayıt Ol",
+    "email": "E-posta",
+    "password": "Şifre",
+    "name": "Adın",
+    "namePlaceholder": "Adın Soyadın",
+    "switchToSignUp": "Hesabın yok mu? Kayıt ol",
+    "switchToSignIn": "Zaten hesabın var mı? Giriş yap",
+    "loading": "Yükleniyor...",
+    "errorInvalid": "Geçersiz e-posta veya şifre.",
+    "errorGeneric": "Bir hata oluştu. Tekrar dene."
+  },
+  "rate": {
+    "title": "Oyuncuları Puanla",
+    "subtitle": "Her oyuncuyu yalnızca bir kez puanlayabilirsin",
+    "speed": "Hız",
+    "agility": "Çeviklik",
+    "passing": "Pas",
+    "shooting": "Şut",
+    "defense": "Defans",
+    "goalkeeping": "Kalecilik",
+    "submit": "Puanı Kaydet",
+    "submitted": "Puanlandı",
+    "noPlayers": "Puanlayacak başka oyuncu yok.",
+    "loading": "Yükleniyor...",
+    "successMsg": "Puan kaydedildi!",
+    "errorMsg": "Bir hata oluştu."
+  },
+  "leaderboard": {
+    "title": "Sıralama",
+    "subtitle": "Tüm puanlamalara göre genel sıralama",
+    "overall": "Genel",
+    "speed": "Hız",
+    "agility": "Çeviklik",
+    "passing": "Pas",
+    "shooting": "Şut",
+    "defense": "Defans",
+    "goalkeeping": "Kalecilik",
+    "noData": "Henüz puanlama yapılmamış.",
+    "rank": "Sıra",
+    "player": "Oyuncu",
+    "score": "Puan",
+    "ratings": "değerlendirme"
+  },
+  "teams": {
+    "title": "Takım Kur",
+    "subtitle": "Puanlara göre dengeli takımlar",
+    "lockedTitle": "Takım kurma henüz açık değil",
+    "lockedDesc": "Bu özellik en az 10 oyuncu kayıt olduğunda açılır.",
+    "currentPlayers": "Şu an {count} oyuncu kayıtlı.",
+    "format": "Format Seç",
+    "generateTeams": "Takımları Oluştur",
+    "regenerate": "Yeniden Oluştur",
+    "teamA": "Takım A",
+    "teamB": "Takım B",
+    "avgScore": "Ort. Puan",
+    "unassigned": "Atanmamış",
+    "unassignedDesc": "Bu oyuncular seçilen formata sığmadı",
+    "notEnoughRated": "Dengeli takım için yeterli puanlama yok, rastgele dağıtıldı."
+  },
+  "common": {
+    "appName": "MyPlayers"
+  }
+}
