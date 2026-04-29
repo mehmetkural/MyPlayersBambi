@@ -18,26 +18,32 @@ const FORMATIONS: Record<number, [number, number, number]> = {
 
 interface PositionedPlayer { player: Player; position: Position }
 
+function prefScore(player: Player, pos: Position): number {
+  const idx = (player.positions ?? []).indexOf(pos);
+  return idx === -1 ? -1 : 3 - idx; // 0→3, 1→2, 2→1, none→-1
+}
+
 function assignPositions(players: Player[]): PositionedPlayer[] {
   if (!players.length) return [];
   const [numDef, , numFwd] = FORMATIONS[Math.min(players.length, 11)] ?? [1, 1, 1];
   const pool = [...players];
+  const result: PositionedPlayer[] = [];
 
-  pool.sort((a, b) => (b.goalkeeping ?? 0) - (a.goalkeeping ?? 0));
-  const gk = pool.shift()!;
+  function pick(pos: Position, stat: keyof Player, count: number) {
+    pool.sort((a, b) => {
+      const ps = prefScore(b, pos) - prefScore(a, pos);
+      if (ps !== 0) return ps;
+      return ((b[stat] as number) ?? 0) - ((a[stat] as number) ?? 0);
+    });
+    result.push(...pool.splice(0, count).map(p => ({ player: p, position: pos })));
+  }
 
-  pool.sort((a, b) => (b.defense ?? 0) - (a.defense ?? 0));
-  const defs = pool.splice(0, numDef);
+  pick('GK', 'goalkeeping', 1);
+  pick('DEF', 'defense', numDef);
+  pick('FWD', 'shooting', numFwd);
+  pool.forEach(p => result.push({ player: p, position: 'MID' }));
 
-  pool.sort((a, b) => (b.shooting ?? 0) - (a.shooting ?? 0));
-  const fwds = pool.splice(0, numFwd);
-
-  return [
-    { player: gk, position: 'GK' },
-    ...defs.map(p => ({ player: p, position: 'DEF' as Position })),
-    ...pool.map(p => ({ player: p, position: 'MID' as Position })),
-    ...fwds.map(p => ({ player: p, position: 'FWD' as Position })),
-  ];
+  return result;
 }
 
 // ── Football pitch ────────────────────────────────────────────────────────────

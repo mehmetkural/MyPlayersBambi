@@ -32,6 +32,7 @@ export interface Player {
   defense?: number;
   goalkeeping?: number;
   rating_count?: number;
+  positions?: string[];
 }
 
 export function balanceTeams(players: Player[], playersPerTeam: number): {
