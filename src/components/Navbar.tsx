@@ -11,6 +11,7 @@ import { Link } from '@/i18n/navigation';
 interface NavbarProps {
   playerCount: number;
   isAdmin: boolean;
+  userName: string;
 }
 
 const LOCALES = [
@@ -19,7 +20,7 @@ const LOCALES = [
   { code: 'de', label: 'DE' },
 ];
 
-export default function Navbar({ playerCount, isAdmin }: NavbarProps) {
+export default function Navbar({ playerCount, isAdmin, userName }: NavbarProps) {
   const t = useTranslations('nav');
   const pathname = usePathname();
   const router = useRouter();
@@ -94,13 +95,18 @@ export default function Navbar({ playerCount, isAdmin }: NavbarProps) {
               </button>
             ))}
           </div>
-          <button
-            onClick={handleSignOut}
-            className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors px-3 py-2 rounded-xl hover:bg-gray-800"
-          >
-            <LogOut size={16} />
-            {t('signOut')}
-          </button>
+          <div className="flex items-center gap-2 border-l border-gray-800 pl-3">
+            <div className="w-7 h-7 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-xs flex-shrink-0">
+              {userName.charAt(0).toUpperCase()}
+            </div>
+            <span className="text-sm text-gray-300 font-medium max-w-[120px] truncate">{userName}</span>
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-white transition-colors px-2 py-1.5 rounded-xl hover:bg-gray-800 ml-1"
+            >
+              <LogOut size={15} />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -134,10 +140,18 @@ export default function Navbar({ playerCount, isAdmin }: NavbarProps) {
 
       {/* Mobile top lang switcher */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-800">
-        <Link href="/leaderboard" className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <span>⚽</span>
           <span className="font-bold text-white">MyPlayers</span>
-        </Link>
+          {userName && (
+            <div className="flex items-center gap-1.5 ml-1 pl-2 border-l border-gray-800">
+              <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-xs">
+                {userName.charAt(0).toUpperCase()}
+              </div>
+              <span className="text-gray-400 text-xs font-medium max-w-[80px] truncate">{userName}</span>
+            </div>
+          )}
+        </div>
         <div className="flex items-center gap-1 bg-gray-800 rounded-xl p-1">
           {LOCALES.map(l => (
             <button
