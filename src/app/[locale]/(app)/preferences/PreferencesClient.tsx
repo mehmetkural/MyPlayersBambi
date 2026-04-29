@@ -22,6 +22,7 @@ export default function PreferencesClient({
 }) {
   const t = useTranslations('preferences');
   const supabase = createClient();
+  const [saved, setSaved] = useState<string[]>(savedPositions);
   const [selected, setSelected] = useState<string[]>(savedPositions);
   const [loading, setLoading] = useState(false);
   const [flash, setFlash] = useState(false);
@@ -52,6 +53,7 @@ export default function PreferencesClient({
     setLoading(true);
     await supabase.from('profiles').update({ positions: selected }).eq('id', currentUserId);
     setLoading(false);
+    setSaved(selected);
     setFlash(true);
     setTimeout(() => setFlash(false), 2000);
   }
@@ -64,6 +66,30 @@ export default function PreferencesClient({
           {t('title')}
         </h1>
         <p className="text-gray-400 text-sm mt-1">{t('subtitle')}</p>
+      </div>
+
+      {/* Kayıtlı tercihler */}
+      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 mb-6">
+        <p className="text-gray-500 text-xs uppercase font-semibold tracking-wider mb-3">
+          {t('savedTitle')}
+        </p>
+        {saved.length === 0 ? (
+          <p className="text-gray-600 text-sm">{t('noneYet')}</p>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {saved.map((key, i) => {
+              const pos = POSITIONS.find(p => p.key === key)!;
+              return (
+                <div key={key} className="flex items-center gap-3">
+                  <span className="w-5 text-right text-green-500 font-bold text-sm">{i + 1}.</span>
+                  <span className="text-lg">{pos.emoji}</span>
+                  <span className="text-white font-medium">{t(pos.labelKey)}</span>
+                  <span className="text-gray-600 text-xs ml-1">{pos.key}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Position cards */}
