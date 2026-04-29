@@ -34,7 +34,9 @@
     "noPlayers": "Keine weiteren Spieler zu bewerten.",
     "loading": "Lädt...",
     "successMsg": "Bewertung gespeichert!",
-    "errorMsg": "Etwas ist schiefgelaufen."
+    "errorMsg": "Etwas ist schiefgelaufen.",
+    "rerate": "Bearbeiten",
+    "update": "Aktualisieren"
   },
   "leaderboard": {
     "title": "Rangliste",

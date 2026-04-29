@@ -34,7 +34,9 @@
     "noPlayers": "Puanlayacak başka oyuncu yok.",
     "loading": "Yükleniyor...",
     "successMsg": "Puan kaydedildi!",
-    "errorMsg": "Bir hata oluştu."
+    "errorMsg": "Bir hata oluştu.",
+    "rerate": "Düzenle",
+    "update": "Güncelle"
   },
   "leaderboard": {
     "title": "Sıralama",

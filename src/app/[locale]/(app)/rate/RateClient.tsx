@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { createClient } from '@/lib/supabase/client';
 import { ATTRIBUTES, type Attribute } from '@/lib/utils';
 import { cn } from '@/lib/utils';
-import { CheckCircle, Star } from 'lucide-react';
+import { CheckCircle, Star, Pencil } from 'lucide-react';
 
 interface PlayerEntry {
   id: string;
@@ -82,7 +82,6 @@ export default function RateClient({ players, currentUserId }: RateClientProps) 
   const rated = players.filter(p => ratedIds.has(p.id));
 
   function openPlayer(id: string) {
-    if (ratedIds.has(id)) return;
     setExpanded(expanded === id ? null : id);
     setScores({ speed: 5, agility: 5, passing: 5, shooting: 5, defense: 5, goalkeeping: 5 });
   }
@@ -173,15 +172,48 @@ export default function RateClient({ players, currentUserId }: RateClientProps) 
               {t('submitted')}
             </p>
             {rated.map(player => (
-              <div
-                key={player.id}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl opacity-50"
-              >
-                <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-500 font-bold">
-                  {player.name.charAt(0).toUpperCase()}
+              <div key={player.id} className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+                <div className="flex items-center gap-3 px-4 py-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-500 font-bold flex-shrink-0">
+                    {player.name.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-gray-400 font-medium flex-1">{player.name}</span>
+                  <CheckCircle size={16} className="text-green-600 flex-shrink-0" />
+                  <button
+                    onClick={() => openPlayer(player.id)}
+                    className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-300 transition-colors px-2 py-1 rounded-lg hover:bg-gray-800"
+                  >
+                    <Pencil size={12} />
+                    {t('rerate')}
+                  </button>
                 </div>
-                <span className="text-gray-500 font-medium flex-1">{player.name}</span>
-                <CheckCircle size={18} className="text-green-600" />
+
+                {expanded === player.id && (
+                  <div className="px-4 pb-4 space-y-4 border-t border-gray-800 pt-4">
+                    {ATTRIBUTES.map(attr => (
+                      <ScoreSlider
+                        key={attr}
+                        label={t(attr as Attribute)}
+                        value={scores[attr]}
+                        onChange={v => setScores(prev => ({ ...prev, [attr]: v }))}
+                      />
+                    ))}
+
+                    {flash?.id === player.id && (
+                      <p className={cn('text-sm text-center', flash.success ? 'text-green-400' : 'text-red-400')}>
+                        {flash.success ? t('successMsg') : t('errorMsg')}
+                      </p>
+                    )}
+
+                    <button
+                      onClick={() => submitRating(player.id)}
+                      disabled={loading}
+                      className="w-full bg-green-500 hover:bg-green-400 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors"
+                    >
+                      {loading ? t('loading') : t('update')}
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

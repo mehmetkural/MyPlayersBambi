@@ -34,7 +34,9 @@
     "noPlayers": "No more players to rate.",
     "loading": "Loading...",
     "successMsg": "Rating saved!",
-    "errorMsg": "Something went wrong."
+    "errorMsg": "Something went wrong.",
+    "rerate": "Edit",
+    "update": "Update"
   },
   "leaderboard": {
     "title": "Leaderboard",
