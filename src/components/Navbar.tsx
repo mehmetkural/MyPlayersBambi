@@ -72,7 +72,7 @@ export default function Navbar({ playerCount, isAdmin }: NavbarProps) {
                 currentTab === tab.key
                   ? 'bg-green-500 text-white'
                   : tab.locked
-                  ? 'text-gray-600 cursor-not-allowed pointer-events-none'
+                  ? 'text-gray-600 hover:text-gray-400 hover:bg-gray-800'
                   : 'text-gray-400 hover:text-white hover:bg-gray-800'
               )}
             >
@@ -120,7 +120,7 @@ export default function Navbar({ playerCount, isAdmin }: NavbarProps) {
               currentTab === tab.key
                 ? 'text-green-400'
                 : tab.locked
-                ? 'text-gray-700 pointer-events-none'
+                ? 'text-gray-600 hover:text-gray-400'
                 : 'text-gray-500 hover:text-gray-300'
             )}
           >

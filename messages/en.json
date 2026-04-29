@@ -58,7 +58,7 @@
     "title": "Build Teams",
     "subtitle": "Balanced teams based on player scores",
     "lockedTitle": "Team builder not available yet",
-    "lockedDesc": "This feature unlocks when at least 10 players have registered.",
+    "lockedDesc": "This feature unlocks when at least 6 players have registered.",
     "currentPlayers": "{count} players registered so far.",
     "format": "Select Format",
     "generateTeams": "Generate Teams",

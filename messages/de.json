@@ -58,7 +58,7 @@
     "title": "Teams zusammenstellen",
     "subtitle": "Ausgeglichene Teams basierend auf Spielerwertungen",
     "lockedTitle": "Teambuilder noch nicht verfügbar",
-    "lockedDesc": "Diese Funktion wird freigeschaltet, wenn mindestens 10 Spieler registriert sind.",
+    "lockedDesc": "Diese Funktion wird freigeschaltet, wenn mindestens 6 Spieler registriert sind.",
     "currentPlayers": "Aktuell {count} Spieler registriert.",
     "format": "Format wählen",
     "generateTeams": "Teams erstellen",

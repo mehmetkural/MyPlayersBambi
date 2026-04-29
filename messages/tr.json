@@ -58,7 +58,7 @@
     "title": "Takım Kur",
     "subtitle": "Puanlara göre dengeli takımlar",
     "lockedTitle": "Takım kurma henüz açık değil",
-    "lockedDesc": "Bu özellik en az 10 oyuncu kayıt olduğunda açılır.",
+    "lockedDesc": "Bu özellik en az 6 oyuncu kayıt olduğunda açılır.",
     "currentPlayers": "Şu an {count} oyuncu kayıtlı.",
     "format": "Format Seç",
     "generateTeams": "Takımları Oluştur",

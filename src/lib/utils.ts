@@ -19,7 +19,7 @@ export const TEAM_FORMATS = [
   { label: '11v11', value: 11 },
 ];
 
-export const MIN_PLAYERS_FOR_TEAMS = 10;
+export const MIN_PLAYERS_FOR_TEAMS = 6;
 
 export interface Player {
   id: string;
