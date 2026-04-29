@@ -3,6 +3,7 @@
     "rate": "Puanla",
     "leaderboard": "Sıralama",
     "teams": "Takımlar",
+    "preferences": "Tercihlerim",
     "signOut": "Çıkış"
   },
   "auth": {
@@ -23,6 +24,7 @@
   "rate": {
     "title": "Oyuncuları Puanla",
     "subtitle": "Her oyuncuyu yalnızca bir kez puanlayabilirsin",
+    "registeredPlayers": "{count} kayıtlı oyuncu",
     "speed": "Hız",
     "agility": "Çeviklik",
     "passing": "Pas",
@@ -69,6 +71,17 @@
     "unassigned": "Atanmamış",
     "unassignedDesc": "Bu oyuncular seçilen formata sığmadı",
     "notEnoughRated": "Dengeli takım için yeterli puanlama yok, rastgele dağıtıldı."
+  },
+  "preferences": {
+    "title": "Tercihlerim",
+    "subtitle": "Sahada hangi pozisyonlarda oynamayı tercih ediyorsun? (En fazla 3)",
+    "gk": "Kaleci",
+    "def": "Defans",
+    "mid": "Orta Saha",
+    "fwd": "Forvet",
+    "selected": "seçildi",
+    "save": "Kaydet",
+    "saved": "Kaydedildi!"
   },
   "common": {
     "appName": "MyPlayers"

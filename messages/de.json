@@ -3,6 +3,7 @@
     "rate": "Bewerten",
     "leaderboard": "Rangliste",
     "teams": "Teams",
+    "preferences": "Präferenzen",
     "signOut": "Abmelden"
   },
   "auth": {
@@ -23,6 +24,7 @@
   "rate": {
     "title": "Spieler bewerten",
     "subtitle": "Du kannst jeden Spieler nur einmal bewerten",
+    "registeredPlayers": "{count} registrierte Spieler",
     "speed": "Geschwindigkeit",
     "agility": "Wendigkeit",
     "passing": "Passspiel",
@@ -69,6 +71,17 @@
     "unassigned": "Nicht zugeteilt",
     "unassignedDesc": "Diese Spieler passten nicht ins gewählte Format",
     "notEnoughRated": "Nicht genug Bewertungen für ausgeglichene Teams — zufällig verteilt."
+  },
+  "preferences": {
+    "title": "Meine Präferenzen",
+    "subtitle": "Welche Positionen spielst du am liebsten? (Max. 3)",
+    "gk": "Torwart",
+    "def": "Verteidiger",
+    "mid": "Mittelfeld",
+    "fwd": "Stürmer",
+    "selected": "ausgewählt",
+    "save": "Speichern",
+    "saved": "Gespeichert!"
   },
   "common": {
     "appName": "MyPlayers"

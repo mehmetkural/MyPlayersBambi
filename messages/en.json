@@ -3,6 +3,7 @@
     "rate": "Rate",
     "leaderboard": "Leaderboard",
     "teams": "Teams",
+    "preferences": "My Prefs",
     "signOut": "Sign Out"
   },
   "auth": {
@@ -23,6 +24,7 @@
   "rate": {
     "title": "Rate Players",
     "subtitle": "You can rate each player only once",
+    "registeredPlayers": "{count} registered players",
     "speed": "Speed",
     "agility": "Agility",
     "passing": "Passing",
@@ -69,6 +71,17 @@
     "unassigned": "Unassigned",
     "unassignedDesc": "These players didn't fit the selected format",
     "notEnoughRated": "Not enough ratings for balanced teams — randomly distributed."
+  },
+  "preferences": {
+    "title": "My Preferences",
+    "subtitle": "Which positions do you prefer to play? (Max 3)",
+    "gk": "Goalkeeper",
+    "def": "Defender",
+    "mid": "Midfielder",
+    "fwd": "Forward",
+    "selected": "selected",
+    "save": "Save",
+    "saved": "Saved!"
   },
   "common": {
     "appName": "MyPlayers"

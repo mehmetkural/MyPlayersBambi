@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { createClient } from '@/lib/supabase/client';
 import { ATTRIBUTES, type Attribute } from '@/lib/utils';
 import { cn } from '@/lib/utils';
-import { CheckCircle, Star, Pencil } from 'lucide-react';
+import { CheckCircle, Star, Pencil, Users } from 'lucide-react';
 
 interface PlayerEntry {
   id: string;
@@ -16,6 +16,7 @@ interface PlayerEntry {
 interface RateClientProps {
   players: PlayerEntry[];
   currentUserId: string;
+  totalPlayers: number;
 }
 
 const SCORE_LABELS: Record<number, string> = {
@@ -59,7 +60,7 @@ function ScoreSlider({
   );
 }
 
-export default function RateClient({ players, currentUserId }: RateClientProps) {
+export default function RateClient({ players, currentUserId, totalPlayers }: RateClientProps) {
   const t = useTranslations('rate');
   const supabase = createClient();
 
@@ -113,6 +114,11 @@ export default function RateClient({ players, currentUserId }: RateClientProps) 
           {t('title')}
         </h1>
         <p className="text-gray-400 text-sm mt-1">{t('subtitle')}</p>
+      </div>
+
+      <div className="flex items-center gap-2 text-gray-400 text-sm bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 mb-6">
+        <Users size={14} className="text-green-400" />
+        <span>{t('registeredPlayers', { count: totalPlayers })}</span>
       </div>
 
       {players.length === 0 && (

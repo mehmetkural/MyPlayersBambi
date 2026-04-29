@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { MIN_PLAYERS_FOR_TEAMS } from '@/lib/utils';
-import { Users, Star, Trophy, LogOut, Globe } from 'lucide-react';
+import { Users, Star, Trophy, LogOut, Globe, SlidersHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from '@/i18n/navigation';
 
@@ -43,14 +43,9 @@ export default function Navbar({ playerCount, isAdmin }: NavbarProps) {
 
   const tabs = [
     { key: 'rate', label: t('rate'), icon: Star, href: '/rate' },
+    { key: 'preferences', label: t('preferences'), icon: SlidersHorizontal, href: '/preferences' },
+    { key: 'teams', label: t('teams'), icon: Users, href: '/teams', locked: !teamsUnlocked },
     ...(isAdmin ? [{ key: 'leaderboard', label: t('leaderboard'), icon: Trophy, href: '/leaderboard', locked: false }] : []),
-    {
-      key: 'teams',
-      label: t('teams'),
-      icon: Users,
-      href: '/teams',
-      locked: !teamsUnlocked,
-    },
   ];
 
   return (

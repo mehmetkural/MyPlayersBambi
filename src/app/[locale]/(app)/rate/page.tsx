@@ -25,5 +25,7 @@ export default async function RatePage() {
     rated: ratedIds.has(p.id),
   }));
 
-  return <RateClient players={players} currentUserId={user!.id} />;
+  const totalPlayers = (allPlayers?.length ?? 0) + 1;
+
+  return <RateClient players={players} currentUserId={user!.id} totalPlayers={totalPlayers} />;
 }
