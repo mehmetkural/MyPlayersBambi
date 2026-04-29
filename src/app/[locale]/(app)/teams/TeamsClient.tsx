@@ -158,6 +158,19 @@ export default function TeamsClient({ players, playerCount, unlocked }: TeamsCli
   const [format, setFormat] = useState(5);
   const [teams, setTeams] = useState<ReturnType<typeof balanceTeams> | null>(null);
   const [generated, setGenerated] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(players.map(p => p.id)));
+
+  function togglePlayer(id: string) {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+    setTeams(null);
+    setGenerated(false);
+  }
+
+  const activePlayers = players.filter(p => selectedIds.has(p.id));
 
   if (!unlocked) {
     return (
@@ -183,7 +196,7 @@ export default function TeamsClient({ players, playerCount, unlocked }: TeamsCli
   }
 
   function generate() {
-    setTeams(balanceTeams(players, format));
+    setTeams(balanceTeams(activePlayers, format));
     setGenerated(true);
   }
 
@@ -195,6 +208,39 @@ export default function TeamsClient({ players, playerCount, unlocked }: TeamsCli
           {t('title')}
         </h1>
         <p className="text-gray-400 text-sm mt-1">{t('subtitle')}</p>
+      </div>
+
+      {/* Bu haftaki oyuncular */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-gray-400 text-sm font-medium">{t('thisWeek')}</p>
+          <div className="flex items-center gap-3">
+            <span className="text-gray-600 text-xs">{selectedIds.size}/{players.length}</span>
+            <button onClick={() => { setSelectedIds(new Set(players.map(p => p.id))); setTeams(null); setGenerated(false); }} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{t('selectAll')}</button>
+            <span className="text-gray-700">·</span>
+            <button onClick={() => { setSelectedIds(new Set()); setTeams(null); setGenerated(false); }} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{t('clearAll')}</button>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {players.map(p => {
+            const isActive = selectedIds.has(p.id);
+            return (
+              <button
+                key={p.id}
+                onClick={() => togglePlayer(p.id)}
+                className={cn(
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-all border',
+                  isActive
+                    ? 'bg-green-500/15 border-green-600 text-green-400'
+                    : 'bg-gray-900 border-gray-700 text-gray-500 hover:border-gray-500'
+                )}
+              >
+                <div className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', isActive ? 'bg-green-400' : 'bg-gray-600')} />
+                {p.name}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="mb-6">

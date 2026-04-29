@@ -70,11 +70,15 @@
     "avgScore": "Avg. Score",
     "unassigned": "Unassigned",
     "unassignedDesc": "These players didn't fit the selected format",
-    "notEnoughRated": "Not enough ratings for balanced teams — randomly distributed."
+    "notEnoughRated": "Not enough ratings for balanced teams — randomly distributed.",
+    "thisWeek": "Playing this week",
+    "selectAll": "Select all",
+    "clearAll": "Clear"
   },
   "preferences": {
     "title": "My Preferences",
-    "subtitle": "Which positions do you prefer to play? (Max 3)",
+    "subtitle": "Select your preferred positions in priority order. #1 is your most preferred.",
+    "priorityOrder": "Priority Order",
     "gk": "Goalkeeper",
     "def": "Defender",
     "mid": "Midfielder",

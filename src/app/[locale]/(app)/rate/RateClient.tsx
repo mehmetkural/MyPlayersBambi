@@ -11,6 +11,7 @@ interface PlayerEntry {
   id: string;
   name: string;
   rated: boolean;
+  existingScores?: Record<Attribute, number>;
 }
 
 interface RateClientProps {
@@ -83,8 +84,10 @@ export default function RateClient({ players, currentUserId, totalPlayers }: Rat
   const rated = players.filter(p => ratedIds.has(p.id));
 
   function openPlayer(id: string) {
-    setExpanded(expanded === id ? null : id);
-    setScores({ speed: 5, agility: 5, passing: 5, shooting: 5, defense: 5, goalkeeping: 5 });
+    if (expanded === id) { setExpanded(null); return; }
+    setExpanded(id);
+    const existing = players.find(p => p.id === id)?.existingScores;
+    setScores(existing ?? { speed: 5, agility: 5, passing: 5, shooting: 5, defense: 5, goalkeeping: 5 });
   }
 
   async function submitRating(playerId: string) {

@@ -70,11 +70,15 @@
     "avgScore": "Ort. Puan",
     "unassigned": "Atanmamış",
     "unassignedDesc": "Bu oyuncular seçilen formata sığmadı",
-    "notEnoughRated": "Dengeli takım için yeterli puanlama yok, rastgele dağıtıldı."
+    "notEnoughRated": "Dengeli takım için yeterli puanlama yok, rastgele dağıtıldı.",
+    "thisWeek": "Bu hafta oynayacaklar",
+    "selectAll": "Tümünü seç",
+    "clearAll": "Temizle"
   },
   "preferences": {
     "title": "Tercihlerim",
-    "subtitle": "Sahada hangi pozisyonlarda oynamayı tercih ediyorsun? (En fazla 3)",
+    "subtitle": "Pozisyon tercihlerini öncelik sırasına göre seç. 1. tercih en çok istediğin pozisyon.",
+    "priorityOrder": "Öncelik Sırası",
     "gk": "Kaleci",
     "def": "Defans",
     "mid": "Orta Saha",

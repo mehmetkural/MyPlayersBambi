@@ -12,17 +12,27 @@ export default async function RatePage() {
     .neq('id', user!.id)
     .order('name');
 
-  // Already rated player IDs
+  // Already given ratings with scores
   const { data: givenRatings } = await supabase
     .from('ratings')
-    .select('rated_id')
+    .select('rated_id, speed, agility, passing, shooting, defense, goalkeeping')
     .eq('rater_id', user!.id);
 
-  const ratedIds = new Set((givenRatings ?? []).map(r => r.rated_id));
+  const ratingsMap = new Map(
+    (givenRatings ?? []).map(r => [r.rated_id, {
+      speed: r.speed as number,
+      agility: r.agility as number,
+      passing: r.passing as number,
+      shooting: r.shooting as number,
+      defense: r.defense as number,
+      goalkeeping: r.goalkeeping as number,
+    }])
+  );
 
   const players = (allPlayers ?? []).map(p => ({
     ...p,
-    rated: ratedIds.has(p.id),
+    rated: ratingsMap.has(p.id),
+    existingScores: ratingsMap.get(p.id),
   }));
 
   const totalPlayers = (allPlayers?.length ?? 0) + 1;

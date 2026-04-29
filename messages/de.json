@@ -70,11 +70,15 @@
     "avgScore": "Durchschn. Punkte",
     "unassigned": "Nicht zugeteilt",
     "unassignedDesc": "Diese Spieler passten nicht ins gewählte Format",
-    "notEnoughRated": "Nicht genug Bewertungen für ausgeglichene Teams — zufällig verteilt."
+    "notEnoughRated": "Nicht genug Bewertungen für ausgeglichene Teams — zufällig verteilt.",
+    "thisWeek": "Diese Woche spielend",
+    "selectAll": "Alle auswählen",
+    "clearAll": "Leeren"
   },
   "preferences": {
     "title": "Meine Präferenzen",
-    "subtitle": "Welche Positionen spielst du am liebsten? (Max. 3)",
+    "subtitle": "Wähle deine Lieblingspositionen nach Priorität. Nr. 1 ist deine bevorzugte Position.",
+    "priorityOrder": "Prioritätsreihenfolge",
     "gk": "Torwart",
     "def": "Verteidiger",
     "mid": "Mittelfeld",
