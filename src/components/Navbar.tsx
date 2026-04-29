@@ -41,13 +41,13 @@ export default function Navbar({ playerCount }: NavbarProps) {
   }
 
   const tabs = [
-    { key: 'rate', label: t('rate'), icon: Star, href: `/${locale}/rate` },
-    { key: 'leaderboard', label: t('leaderboard'), icon: Trophy, href: `/${locale}/leaderboard` },
+    { key: 'rate', label: t('rate'), icon: Star, href: '/rate' },
+    { key: 'leaderboard', label: t('leaderboard'), icon: Trophy, href: '/leaderboard' },
     {
       key: 'teams',
       label: t('teams'),
       icon: Users,
-      href: `/${locale}/teams`,
+      href: '/teams',
       locked: !teamsUnlocked,
     },
   ];
@@ -56,7 +56,7 @@ export default function Navbar({ playerCount }: NavbarProps) {
     <>
       {/* Desktop top bar */}
       <header className="hidden md:flex items-center justify-between px-6 py-4 bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
-        <Link href={`/${locale}/leaderboard`} className="flex items-center gap-2">
+        <Link href="/leaderboard" className="flex items-center gap-2">
           <span className="text-xl">⚽</span>
           <span className="font-bold text-white text-lg">MyPlayers</span>
         </Link>
@@ -138,7 +138,7 @@ export default function Navbar({ playerCount }: NavbarProps) {
 
       {/* Mobile top lang switcher */}
       <div className="md:hidden flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-800">
-        <Link href={`/${locale}/leaderboard`} className="flex items-center gap-2">
+        <Link href="/leaderboard" className="flex items-center gap-2">
           <span>⚽</span>
           <span className="font-bold text-white">MyPlayers</span>
         </Link>
