@@ -84,6 +84,8 @@
     "mid": "Mittelfeld",
     "fwd": "Stürmer",
     "selected": "ausgewählt",
+    "savedTitle": "Gespeicherte Präferenzen",
+    "noneYet": "Noch keine Präferenzen gespeichert.",
     "save": "Speichern",
     "saved": "Gespeichert!"
   },

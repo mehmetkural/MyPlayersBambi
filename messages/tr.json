@@ -84,6 +84,8 @@
     "mid": "Orta Saha",
     "fwd": "Forvet",
     "selected": "seçildi",
+    "savedTitle": "Kayıtlı Tercihlerim",
+    "noneYet": "Henüz tercih eklenmemiş.",
     "save": "Kaydet",
     "saved": "Kaydedildi!"
   },

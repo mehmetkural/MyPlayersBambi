@@ -84,6 +84,8 @@
     "mid": "Midfielder",
     "fwd": "Forward",
     "selected": "selected",
+    "savedTitle": "My Saved Preferences",
+    "noneYet": "No preferences saved yet.",
     "save": "Save",
     "saved": "Saved!"
   },
