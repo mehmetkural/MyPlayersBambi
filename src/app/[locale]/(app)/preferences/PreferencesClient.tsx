@@ -26,6 +26,7 @@ export default function PreferencesClient({
   const [selected, setSelected] = useState<string[]>(savedPositions);
   const [loading, setLoading] = useState(false);
   const [flash, setFlash] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   function toggle(key: string) {
     if (selected.includes(key)) {
@@ -51,8 +52,13 @@ export default function PreferencesClient({
 
   async function save() {
     setLoading(true);
-    await supabase.from('profiles').update({ positions: selected }).eq('id', currentUserId);
+    setError(null);
+    const { error: dbError } = await supabase.from('profiles').update({ positions: selected }).eq('id', currentUserId);
     setLoading(false);
+    if (dbError) {
+      setError(dbError.message);
+      return;
+    }
     setSaved(selected);
     setFlash(true);
     setTimeout(() => setFlash(false), 2000);
@@ -166,6 +172,9 @@ export default function PreferencesClient({
         </div>
       )}
 
+      {error && (
+        <p className="text-red-400 text-sm mb-3 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-2">{error}</p>
+      )}
       <button
         onClick={save}
         disabled={loading || selected.length === 0}
