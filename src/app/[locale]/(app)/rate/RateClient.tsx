@@ -92,7 +92,7 @@ export default function RateClient({ players, currentUserId }: RateClientProps) 
       rater_id: currentUserId,
       rated_id: playerId,
       ...scores,
-    });
+    }, { onConflict: 'rater_id,rated_id' });
     setLoading(false);
     if (!error) {
       setRatedIds(prev => new Set([...prev, playerId]));
