@@ -11,7 +11,7 @@ export default async function LocalePage({
   const { data: { user } } = await supabase.auth.getUser();
 
   if (user) {
-    redirect(`/${locale}/leaderboard`);
+    redirect(`/${locale}/rate`);
   } else {
     redirect(`/${locale}/auth`);
   }

@@ -48,7 +48,7 @@ export default function AuthPage() {
       }
     }
 
-    router.push(`/${locale}/leaderboard`);
+    router.push(`/${locale}/rate`);
     router.refresh();
   }
 
