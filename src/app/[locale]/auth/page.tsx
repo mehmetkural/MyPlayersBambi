@@ -26,7 +26,7 @@ export default function AuthPage() {
     setError('');
 
     if (isSignUp) {
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: { data: { name } },
@@ -36,10 +36,8 @@ export default function AuthPage() {
         setLoading(false);
         return;
       }
-      // Insert profile
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from('profiles').upsert({ id: user.id, name });
+      if (signUpData.user) {
+        await supabase.from('profiles').upsert({ id: signUpData.user.id, name });
       }
     } else {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
