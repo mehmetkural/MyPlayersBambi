@@ -17,13 +17,16 @@ export default async function AppLayout({
     redirect(`/${locale}/auth`);
   }
 
-  const { count } = await supabase
-    .from('profiles')
-    .select('*', { count: 'exact', head: true });
+  const [{ count }, { data: profile }] = await Promise.all([
+    supabase.from('profiles').select('*', { count: 'exact', head: true }),
+    supabase.from('profiles').select('is_admin').eq('id', user!.id).single(),
+  ]);
+
+  const isAdmin = profile?.is_admin ?? false;
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar playerCount={count ?? 0} />
+      <Navbar playerCount={count ?? 0} isAdmin={isAdmin} />
       <main className="flex-1 pb-24 md:pb-0">
         {children}
       </main>

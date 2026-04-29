@@ -10,6 +10,7 @@ import { Link } from '@/i18n/navigation';
 
 interface NavbarProps {
   playerCount: number;
+  isAdmin: boolean;
 }
 
 const LOCALES = [
@@ -18,7 +19,7 @@ const LOCALES = [
   { code: 'de', label: 'DE' },
 ];
 
-export default function Navbar({ playerCount }: NavbarProps) {
+export default function Navbar({ playerCount, isAdmin }: NavbarProps) {
   const t = useTranslations('nav');
   const pathname = usePathname();
   const router = useRouter();
@@ -42,7 +43,7 @@ export default function Navbar({ playerCount }: NavbarProps) {
 
   const tabs = [
     { key: 'rate', label: t('rate'), icon: Star, href: '/rate' },
-    { key: 'leaderboard', label: t('leaderboard'), icon: Trophy, href: '/leaderboard' },
+    ...(isAdmin ? [{ key: 'leaderboard', label: t('leaderboard'), icon: Trophy, href: '/leaderboard', locked: false }] : []),
     {
       key: 'teams',
       label: t('teams'),
