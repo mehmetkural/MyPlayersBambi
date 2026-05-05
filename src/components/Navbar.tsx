@@ -46,7 +46,7 @@ export default function Navbar({ playerCount, isAdmin, userName }: NavbarProps) 
     { key: 'rate', label: t('rate'), icon: Star, href: '/rate' },
     { key: 'preferences', label: t('preferences'), icon: SlidersHorizontal, href: '/preferences' },
     { key: 'teams', label: t('teams'), icon: Users, href: '/teams', locked: !teamsUnlocked },
-    ...(isAdmin ? [{ key: 'admin', label: 'Admin', icon: Shield, href: '/admin', locked: false }] : []),
+    ...(isAdmin && currentTab === 'admin' ? [{ key: 'admin', label: 'Admin', icon: Shield, href: '/admin', locked: false }] : []),
   ];
 
   return (
