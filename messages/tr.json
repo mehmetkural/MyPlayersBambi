@@ -73,7 +73,8 @@
     "notEnoughRated": "Dengeli takım için yeterli puanlama yok, rastgele dağıtıldı.",
     "thisWeek": "Bu hafta oynayacaklar",
     "selectAll": "Tümünü seç",
-    "clearAll": "Temizle"
+    "clearAll": "Temizle",
+    "noTeamsYet": "Henüz takım oluşturulmadı."
   },
   "preferences": {
     "title": "Tercihlerim",

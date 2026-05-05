@@ -73,7 +73,8 @@
     "notEnoughRated": "Not enough ratings for balanced teams — randomly distributed.",
     "thisWeek": "Playing this week",
     "selectAll": "Select all",
-    "clearAll": "Clear"
+    "clearAll": "Clear",
+    "noTeamsYet": "No teams generated yet."
   },
   "preferences": {
     "title": "My Preferences",

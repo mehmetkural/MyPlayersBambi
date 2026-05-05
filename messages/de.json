@@ -73,7 +73,8 @@
     "notEnoughRated": "Nicht genug Bewertungen für ausgeglichene Teams — zufällig verteilt.",
     "thisWeek": "Diese Woche spielend",
     "selectAll": "Alle auswählen",
-    "clearAll": "Leeren"
+    "clearAll": "Leeren",
+    "noTeamsYet": "Noch keine Teams erstellt."
   },
   "preferences": {
     "title": "Meine Präferenzen",

@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { balanceTeams, TEAM_FORMATS, MIN_PLAYERS_FOR_TEAMS, type Player } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 import { Users, Lock, RefreshCw } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 // ── Position assignment ──────────────────────────────────────────────────────
 
@@ -20,7 +21,7 @@ interface PositionedPlayer { player: Player; position: Position }
 
 function prefScore(player: Player, pos: Position): number {
   const idx = (player.positions ?? []).indexOf(pos);
-  return idx === -1 ? -1 : 3 - idx; // 0→3, 1→2, 2→1, none→-1
+  return idx === -1 ? -1 : 3 - idx;
 }
 
 function assignPositions(players: Player[]): PositionedPlayer[] {
@@ -44,6 +45,18 @@ function assignPositions(players: Player[]): PositionedPlayer[] {
   pool.forEach(p => result.push({ player: p, position: 'MID' }));
 
   return result;
+}
+
+function buildTeams(
+  players: Player[],
+  ids: { teamAIds: string[]; teamBIds: string[]; unassignedIds: string[] }
+): ReturnType<typeof balanceTeams> {
+  const byId = new Map(players.map(p => [p.id, p]));
+  return {
+    teamA: ids.teamAIds.flatMap(id => { const p = byId.get(id); return p ? [p] : []; }),
+    teamB: ids.teamBIds.flatMap(id => { const p = byId.get(id); return p ? [p] : []; }),
+    unassigned: ids.unassignedIds.flatMap(id => { const p = byId.get(id); return p ? [p] : []; }),
+  };
 }
 
 // ── Matchups ─────────────────────────────────────────────────────────────────
@@ -80,7 +93,7 @@ function Matchups({ teamA, teamB }: { teamA: PositionedPlayer[]; teamB: Position
   );
 }
 
-// ── Team results (pitches + matchups) ────────────────────────────────────────
+// ── Team results (matchups + pitches) ────────────────────────────────────────
 
 function TeamResults({ teams, t }: { teams: ReturnType<typeof balanceTeams>; t: ReturnType<typeof useTranslations<'teams'>> }) {
   const posA = assignPositions(teams.teamA);
@@ -156,22 +169,14 @@ function FootballPitch({ positionedPlayers, color, title }: {
             </linearGradient>
           </defs>
           <rect width="100" height="150" fill={`url(#g-${color})`} />
-          {/* outer border */}
           <rect x="3" y="3" width="94" height="144" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="0.9" />
-          {/* halfway line */}
           <line x1="3" y1="75" x2="97" y2="75" stroke="rgba(255,255,255,0.4)" strokeWidth="0.7" />
-          {/* center circle (ellipse to compensate 2:3 aspect) */}
           <ellipse cx="50" cy="75" rx="13" ry="9" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="0.7" />
           <circle cx="50" cy="75" r="1" fill="rgba(255,255,255,0.45)" />
-          {/* top penalty area */}
           <rect x="26" y="3" width="48" height="21" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="0.6" />
-          {/* bottom penalty area */}
           <rect x="26" y="126" width="48" height="21" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="0.6" />
-          {/* top goal */}
           <rect x="37" y="3" width="26" height="8" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="0.6" />
-          {/* bottom goal */}
           <rect x="37" y="139" width="26" height="8" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="0.6" />
-          {/* penalty spots */}
           <circle cx="50" cy="18" r="0.8" fill="rgba(255,255,255,0.45)" />
           <circle cx="50" cy="132" r="0.8" fill="rgba(255,255,255,0.45)" />
         </svg>
@@ -224,13 +229,20 @@ interface TeamsClientProps {
   players: Player[];
   playerCount: number;
   unlocked: boolean;
+  isAdmin: boolean;
+  initialTeams: { teamAIds: string[]; teamBIds: string[]; unassignedIds: string[] } | null;
 }
 
-export default function TeamsClient({ players, playerCount, unlocked }: TeamsClientProps) {
+export default function TeamsClient({ players, playerCount, unlocked, isAdmin, initialTeams }: TeamsClientProps) {
   const t = useTranslations('teams');
+  const supabase = createClient();
+
   const [format, setFormat] = useState(5);
-  const [teams, setTeams] = useState<ReturnType<typeof balanceTeams> | null>(null);
+  const [teams, setTeams] = useState<ReturnType<typeof balanceTeams> | null>(() =>
+    initialTeams ? buildTeams(players, initialTeams) : null
+  );
   const [generated, setGenerated] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(players.map(p => p.id)));
 
   function togglePlayer(id: string) {
@@ -245,7 +257,7 @@ export default function TeamsClient({ players, playerCount, unlocked }: TeamsCli
 
   const activePlayers = players.filter(p => selectedIds.has(p.id));
 
-  if (!unlocked) {
+  if (isAdmin && !unlocked) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-6 flex flex-col items-center justify-center min-h-[60vh] text-center">
         <div className="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center mb-4">
@@ -268,9 +280,19 @@ export default function TeamsClient({ players, playerCount, unlocked }: TeamsCli
     );
   }
 
-  function generate() {
-    setTeams(balanceTeams(activePlayers, format));
+  async function generate() {
+    const newTeams = balanceTeams(activePlayers, format);
+    setTeams(newTeams);
     setGenerated(true);
+    setSaving(true);
+    await supabase.from('saved_teams').upsert({
+      id: 'current',
+      team_a_ids: newTeams.teamA.map(p => p.id),
+      team_b_ids: newTeams.teamB.map(p => p.id),
+      unassigned_ids: newTeams.unassigned.map(p => p.id),
+      updated_at: new Date().toISOString(),
+    });
+    setSaving(false);
   }
 
   return (
@@ -283,66 +305,75 @@ export default function TeamsClient({ players, playerCount, unlocked }: TeamsCli
         <p className="text-gray-400 text-sm mt-1">{t('subtitle')}</p>
       </div>
 
-      {/* Bu haftaki oyuncular */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-gray-400 text-sm font-medium">{t('thisWeek')}</p>
-          <div className="flex items-center gap-3">
-            <span className="text-gray-600 text-xs">{selectedIds.size}/{players.length}</span>
-            <button onClick={() => { setSelectedIds(new Set(players.map(p => p.id))); setTeams(null); setGenerated(false); }} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{t('selectAll')}</button>
-            <span className="text-gray-700">·</span>
-            <button onClick={() => { setSelectedIds(new Set()); setTeams(null); setGenerated(false); }} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{t('clearAll')}</button>
+      {isAdmin && (
+        <>
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-gray-400 text-sm font-medium">{t('thisWeek')}</p>
+              <div className="flex items-center gap-3">
+                <span className="text-gray-600 text-xs">{selectedIds.size}/{players.length}</span>
+                <button onClick={() => { setSelectedIds(new Set(players.map(p => p.id))); setTeams(null); setGenerated(false); }} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{t('selectAll')}</button>
+                <span className="text-gray-700">·</span>
+                <button onClick={() => { setSelectedIds(new Set()); setTeams(null); setGenerated(false); }} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{t('clearAll')}</button>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {players.map(p => {
+                const isActive = selectedIds.has(p.id);
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => togglePlayer(p.id)}
+                    className={cn(
+                      'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-all border',
+                      isActive
+                        ? 'bg-green-500/15 border-green-600 text-green-400'
+                        : 'bg-gray-900 border-gray-700 text-gray-500 hover:border-gray-500'
+                    )}
+                  >
+                    <div className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', isActive ? 'bg-green-400' : 'bg-gray-600')} />
+                    {p.name}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {players.map(p => {
-            const isActive = selectedIds.has(p.id);
-            return (
-              <button
-                key={p.id}
-                onClick={() => togglePlayer(p.id)}
-                className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-all border',
-                  isActive
-                    ? 'bg-green-500/15 border-green-600 text-green-400'
-                    : 'bg-gray-900 border-gray-700 text-gray-500 hover:border-gray-500'
-                )}
-              >
-                <div className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', isActive ? 'bg-green-400' : 'bg-gray-600')} />
-                {p.name}
-              </button>
-            );
-          })}
-        </div>
-      </div>
 
-      <div className="mb-6">
-        <p className="text-gray-400 text-sm mb-3">{t('format')}</p>
-        <div className="flex flex-wrap gap-2">
-          {TEAM_FORMATS.map(f => (
-            <button
-              key={f.value}
-              onClick={() => { setFormat(f.value); setGenerated(false); setTeams(null); }}
-              className={cn(
-                'px-4 py-2 rounded-xl text-sm font-semibold transition-colors',
-                format === f.value ? 'bg-green-500 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'
-              )}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      </div>
+          <div className="mb-6">
+            <p className="text-gray-400 text-sm mb-3">{t('format')}</p>
+            <div className="flex flex-wrap gap-2">
+              {TEAM_FORMATS.map(f => (
+                <button
+                  key={f.value}
+                  onClick={() => { setFormat(f.value); setGenerated(false); setTeams(null); }}
+                  className={cn(
+                    'px-4 py-2 rounded-xl text-sm font-semibold transition-colors',
+                    format === f.value ? 'bg-green-500 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'
+                  )}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
-      <button
-        onClick={generate}
-        className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 text-white font-semibold py-3 rounded-xl transition-colors mb-6"
-      >
-        <RefreshCw size={18} />
-        {generated ? t('regenerate') : t('generateTeams')}
-      </button>
+          <button
+            onClick={generate}
+            disabled={saving}
+            className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-400 disabled:opacity-60 text-white font-semibold py-3 rounded-xl transition-colors mb-6"
+          >
+            <RefreshCw size={18} className={saving ? 'animate-spin' : ''} />
+            {generated ? t('regenerate') : t('generateTeams')}
+          </button>
+        </>
+      )}
 
-      {teams && <TeamResults teams={teams} t={t} />}
+      {teams
+        ? <TeamResults teams={teams} t={t} />
+        : !isAdmin && (
+          <p className="text-gray-500 text-center py-12">{t('noTeamsYet')}</p>
+        )
+      }
     </div>
   );
 }

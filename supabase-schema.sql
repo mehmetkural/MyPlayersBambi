@@ -2,6 +2,7 @@
 create table profiles (
   id uuid references auth.users on delete cascade primary key,
   name text not null,
+  is_admin boolean not null default false,
   created_at timestamptz default now()
 );
 
@@ -73,3 +74,18 @@ group by p.id, p.name;
 
 -- Grant view access
 grant select on player_scores to anon, authenticated;
+
+-- 4. Saved teams (admin-generated, single current row)
+create table saved_teams (
+  id text primary key,
+  team_a_ids uuid[] not null,
+  team_b_ids uuid[] not null,
+  unassigned_ids uuid[] not null default '{}',
+  updated_at timestamptz default now()
+);
+
+alter table saved_teams enable row level security;
+create policy "saved_teams_select" on saved_teams for select using (true);
+create policy "saved_teams_write" on saved_teams for all using (
+  exists (select 1 from profiles where id = auth.uid() and is_admin = true)
+);
