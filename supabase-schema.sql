@@ -45,7 +45,7 @@ select
   round(avg(r.defense)::numeric, 1) as defense,
   round(avg(r.goalkeeping)::numeric, 1) as goalkeeping,
   round(
-    (avg(r.speed) + avg(r.agility) + avg(r.passing) + avg(r.shooting) + avg(r.defense) + avg(r.goalkeeping)) / 6,
+    (avg(r.speed) + avg(r.agility) + avg(r.passing) + avg(r.shooting) + avg(r.defense)) / 5,
     1
   ) as overall
 from profiles p
