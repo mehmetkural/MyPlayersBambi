@@ -31,6 +31,8 @@ export default async function TeamsPage() {
     unassignedIds: savedTeams.unassigned_ids as string[],
   } : null;
 
+  const weeklyPlayerIds = (savedTeams?.weekly_player_ids as string[] | null) ?? null;
+
   const matchInfo = {
     matchDate: (savedTeams?.match_date as string | null) ?? null,
     venue: (savedTeams?.venue as string | null) ?? null,
@@ -48,6 +50,7 @@ export default async function TeamsPage() {
       unlocked={unlocked}
       isAdmin={isAdmin}
       initialTeams={initialTeams}
+      weeklyPlayerIds={weeklyPlayerIds}
       hasRatedAll={hasRatedAll}
       myReaction={myReaction}
       likeCount={likeCount}

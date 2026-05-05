@@ -78,9 +78,10 @@ grant select on player_scores to anon, authenticated;
 -- 4. Saved teams (admin-generated, single current row)
 create table saved_teams (
   id text primary key,
-  team_a_ids uuid[] not null,
-  team_b_ids uuid[] not null,
+  team_a_ids uuid[] not null default '{}',
+  team_b_ids uuid[] not null default '{}',
   unassigned_ids uuid[] not null default '{}',
+  weekly_player_ids uuid[] not null default '{}',
   match_date timestamptz,
   venue text,
   updated_at timestamptz default now()

@@ -378,6 +378,7 @@ interface TeamsClientProps {
   unlocked: boolean;
   isAdmin: boolean;
   initialTeams: { teamAIds: string[]; teamBIds: string[]; unassignedIds: string[] } | null;
+  weeklyPlayerIds: string[] | null;
   hasRatedAll: boolean;
   myReaction: boolean | null;
   likeCount: number;
@@ -386,7 +387,7 @@ interface TeamsClientProps {
   userId: string;
 }
 
-export default function TeamsClient({ players, playerCount, unlocked, isAdmin, initialTeams, hasRatedAll, myReaction, likeCount, dislikeCount, matchInfo, userId }: TeamsClientProps) {
+export default function TeamsClient({ players, playerCount, unlocked, isAdmin, initialTeams, weeklyPlayerIds, hasRatedAll, myReaction, likeCount, dislikeCount, matchInfo, userId }: TeamsClientProps) {
   const t = useTranslations('teams');
   const supabase = createClient();
 
@@ -396,7 +397,11 @@ export default function TeamsClient({ players, playerCount, unlocked, isAdmin, i
   );
   const [generated, setGenerated] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(players.map(p => p.id)));
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() =>
+    weeklyPlayerIds && weeklyPlayerIds.length > 0
+      ? new Set(weeklyPlayerIds)
+      : new Set(players.map(p => p.id))
+  );
 
   const [reaction, setReaction] = useState<boolean | null>(myReaction);
   const [likes, setLikes] = useState(likeCount);
@@ -404,10 +409,18 @@ export default function TeamsClient({ players, playerCount, unlocked, isAdmin, i
   const [currentMatchDate, setCurrentMatchDate] = useState(matchInfo.matchDate);
   const [currentVenue, setCurrentVenue] = useState(matchInfo.venue);
 
+  function saveWeeklyPlayers(ids: Set<string>) {
+    supabase.from('saved_teams').upsert(
+      { id: 'current', weekly_player_ids: [...ids] },
+      { onConflict: 'id' }
+    );
+  }
+
   function togglePlayer(id: string) {
     setSelectedIds(prev => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
+      saveWeeklyPlayers(next);
       return next;
     });
     setTeams(null);
@@ -525,9 +538,9 @@ export default function TeamsClient({ players, playerCount, unlocked, isAdmin, i
               <p className="text-gray-400 text-sm font-medium">{t('thisWeek')}</p>
               <div className="flex items-center gap-3">
                 <span className="text-gray-600 text-xs">{selectedIds.size}/{players.length}</span>
-                <button onClick={() => { setSelectedIds(new Set(players.map(p => p.id))); setTeams(null); setGenerated(false); }} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{t('selectAll')}</button>
+                <button onClick={() => { const all = new Set(players.map(p => p.id)); setSelectedIds(all); saveWeeklyPlayers(all); setTeams(null); setGenerated(false); }} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{t('selectAll')}</button>
                 <span className="text-gray-700">·</span>
-                <button onClick={() => { setSelectedIds(new Set()); setTeams(null); setGenerated(false); }} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{t('clearAll')}</button>
+                <button onClick={() => { const empty = new Set<string>(); setSelectedIds(empty); saveWeeklyPlayers(empty); setTeams(null); setGenerated(false); }} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{t('clearAll')}</button>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
