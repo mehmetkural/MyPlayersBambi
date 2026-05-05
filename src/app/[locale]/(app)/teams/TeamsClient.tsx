@@ -12,10 +12,19 @@ import { Link } from '@/i18n/navigation';
 
 type Position = 'GK' | 'DEF' | 'MID' | 'FWD';
 
+// [numDef, _, numFwd] — no GK, MID gets the remainder
 const FORMATIONS: Record<number, [number, number, number]> = {
-  1: [0, 0, 0], 2: [0, 1, 0], 3: [0, 1, 1], 4: [1, 1, 1],
-  5: [1, 2, 1], 6: [2, 2, 1], 7: [2, 3, 1], 8: [2, 3, 2],
-  9: [3, 3, 2], 10: [3, 4, 2], 11: [4, 4, 2],
+  1:  [0, 0, 1],
+  2:  [1, 0, 1],
+  3:  [1, 1, 1],
+  4:  [1, 2, 1],
+  5:  [2, 1, 2],
+  6:  [2, 2, 2],
+  7:  [2, 3, 2],
+  8:  [3, 2, 3],
+  9:  [3, 3, 3],
+  10: [3, 4, 3],
+  11: [4, 3, 4],
 };
 
 interface PositionedPlayer { player: Player; position: Position }
