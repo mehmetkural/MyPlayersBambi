@@ -80,6 +80,39 @@ function Matchups({ teamA, teamB }: { teamA: PositionedPlayer[]; teamB: Position
   );
 }
 
+// ── Team results (pitches + matchups) ────────────────────────────────────────
+
+function TeamResults({ teams, t }: { teams: ReturnType<typeof balanceTeams>; t: ReturnType<typeof useTranslations<'teams'>> }) {
+  const posA = assignPositions(teams.teamA);
+  const posB = assignPositions(teams.teamB);
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        <FootballPitch positionedPlayers={posA} color="blue" title={t('teamA')} />
+        <FootballPitch positionedPlayers={posB} color="red" title={t('teamB')} />
+      </div>
+
+      <Matchups teamA={posA} teamB={posB} />
+
+      {teams.unassigned.length > 0 && (
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
+          <p className="text-gray-400 font-semibold text-sm mb-2">{t('unassigned')}</p>
+          <div className="flex flex-wrap gap-2">
+            {teams.unassigned.map(p => (
+              <div key={p.id} className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 rounded-xl">
+                <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-xs">
+                  {p.name.charAt(0).toUpperCase()}
+                </div>
+                <span className="text-white text-sm">{p.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Football pitch ────────────────────────────────────────────────────────────
 
 const POS_Y: Record<Position, number> = { GK: 84, DEF: 65, MID: 43, FWD: 19 };
@@ -309,35 +342,7 @@ export default function TeamsClient({ players, playerCount, unlocked }: TeamsCli
         {generated ? t('regenerate') : t('generateTeams')}
       </button>
 
-      {teams && (() => {
-        const posA = assignPositions(teams.teamA);
-        const posB = assignPositions(teams.teamB);
-        return (
-        <div className="space-y-4">
-          <Matchups teamA={posA} teamB={posB} />
-          <div className="grid grid-cols-2 gap-3">
-            <FootballPitch positionedPlayers={posA} color="blue" title={t('teamA')} />
-            <FootballPitch positionedPlayers={posB} color="red" title={t('teamB')} />
-          </div>
-
-          {teams.unassigned.length > 0 && (
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
-              <p className="text-gray-400 font-semibold text-sm mb-2">{t('unassigned')}</p>
-              <div className="flex flex-wrap gap-2">
-                {teams.unassigned.map(p => (
-                  <div key={p.id} className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 rounded-xl">
-                    <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 font-bold text-xs">
-                      {p.name.charAt(0).toUpperCase()}
-                    </div>
-                    <span className="text-white text-sm">{p.name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-        );
-      })()}
+      {teams && <TeamResults teams={teams} t={t} />}
     </div>
   );
 }
