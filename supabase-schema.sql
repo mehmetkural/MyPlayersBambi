@@ -81,6 +81,8 @@ create table saved_teams (
   team_a_ids uuid[] not null,
   team_b_ids uuid[] not null,
   unassigned_ids uuid[] not null default '{}',
+  match_date timestamptz,
+  venue text,
   updated_at timestamptz default now()
 );
 

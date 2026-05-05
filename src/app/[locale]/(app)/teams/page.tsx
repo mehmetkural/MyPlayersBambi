@@ -31,6 +31,11 @@ export default async function TeamsPage() {
     unassignedIds: savedTeams.unassigned_ids as string[],
   } : null;
 
+  const matchInfo = {
+    matchDate: (savedTeams?.match_date as string | null) ?? null,
+    venue: (savedTeams?.venue as string | null) ?? null,
+  };
+
   const reactionList = reactions ?? [];
   const myReaction = reactionList.find(r => r.user_id === user!.id)?.liked ?? null;
   const likeCount = reactionList.filter(r => r.liked).length;
@@ -47,6 +52,7 @@ export default async function TeamsPage() {
       myReaction={myReaction}
       likeCount={likeCount}
       dislikeCount={dislikeCount}
+      matchInfo={matchInfo}
     />
   );
 }

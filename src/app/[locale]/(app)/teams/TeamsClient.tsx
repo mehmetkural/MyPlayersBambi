@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { balanceTeams, TEAM_FORMATS, MIN_PLAYERS_FOR_TEAMS, type Player } from '@/lib/utils';
 import { cn } from '@/lib/utils';
-import { Users, Lock, RefreshCw, Star, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Users, Lock, RefreshCw, Star, ThumbsUp, ThumbsDown, CalendarDays, MapPin, Check } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Link } from '@/i18n/navigation';
 
@@ -131,6 +131,88 @@ function TeamResults({ teams, t }: { teams: ReturnType<typeof balanceTeams>; t: 
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ── Match info ───────────────────────────────────────────────────────────────
+
+function MatchInfo({ isAdmin, matchDate, venue, onSave }: {
+  isAdmin: boolean;
+  matchDate: string | null;
+  venue: string | null;
+  onSave: (matchDate: string | null, venue: string | null) => Promise<void>;
+}) {
+  const [editDate, setEditDate] = useState(
+    matchDate ? matchDate.slice(0, 16) : ''
+  );
+  const [editVenue, setEditVenue] = useState(venue ?? '');
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  async function handleSave() {
+    setSaving(true);
+    await onSave(editDate || null, editVenue.trim() || null);
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  }
+
+  if (!isAdmin) {
+    if (!matchDate && !venue) return null;
+    return (
+      <div className="bg-gray-900 border border-gray-800 rounded-2xl px-4 py-3 flex flex-wrap gap-4">
+        {matchDate && (
+          <div className="flex items-center gap-2 text-sm text-gray-300">
+            <CalendarDays size={15} className="text-green-400 flex-shrink-0" />
+            <span>{new Date(matchDate).toLocaleString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</span>
+          </div>
+        )}
+        {venue && (
+          <div className="flex items-center gap-2 text-sm text-gray-300">
+            <MapPin size={15} className="text-green-400 flex-shrink-0" />
+            <span>{venue}</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 space-y-3">
+      <div className="space-y-2">
+        <label className="flex items-center gap-2 text-xs text-gray-500 font-medium">
+          <CalendarDays size={13} />
+          Maç tarihi ve saati
+        </label>
+        <input
+          type="datetime-local"
+          value={editDate}
+          onChange={e => setEditDate(e.target.value)}
+          className="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-green-500 transition-colors"
+        />
+      </div>
+      <div className="space-y-2">
+        <label className="flex items-center gap-2 text-xs text-gray-500 font-medium">
+          <MapPin size={13} />
+          Stad / Saha
+        </label>
+        <input
+          type="text"
+          value={editVenue}
+          onChange={e => setEditVenue(e.target.value)}
+          placeholder="Saha adı..."
+          className="w-full bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-green-500 transition-colors"
+        />
+      </div>
+      <button
+        onClick={handleSave}
+        disabled={saving}
+        className="flex items-center gap-2 bg-green-500 hover:bg-green-400 disabled:opacity-60 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
+      >
+        {saved ? <Check size={15} /> : <CalendarDays size={15} />}
+        {saved ? 'Kaydedildi!' : saving ? 'Kaydediliyor...' : 'Kaydet'}
+      </button>
     </div>
   );
 }
@@ -300,9 +382,10 @@ interface TeamsClientProps {
   myReaction: boolean | null;
   likeCount: number;
   dislikeCount: number;
+  matchInfo: { matchDate: string | null; venue: string | null };
 }
 
-export default function TeamsClient({ players, playerCount, unlocked, isAdmin, initialTeams, hasRatedAll, myReaction, likeCount, dislikeCount }: TeamsClientProps) {
+export default function TeamsClient({ players, playerCount, unlocked, isAdmin, initialTeams, hasRatedAll, myReaction, likeCount, dislikeCount, matchInfo }: TeamsClientProps) {
   const t = useTranslations('teams');
   const supabase = createClient();
 
@@ -317,6 +400,8 @@ export default function TeamsClient({ players, playerCount, unlocked, isAdmin, i
   const [reaction, setReaction] = useState<boolean | null>(myReaction);
   const [likes, setLikes] = useState(likeCount);
   const [dislikes, setDislikes] = useState(dislikeCount);
+  const [currentMatchDate, setCurrentMatchDate] = useState(matchInfo.matchDate);
+  const [currentVenue, setCurrentVenue] = useState(matchInfo.venue);
 
   function togglePlayer(id: string) {
     setSelectedIds(prev => {
@@ -379,6 +464,8 @@ export default function TeamsClient({ players, playerCount, unlocked, isAdmin, i
     setReaction(null);
     setLikes(0);
     setDislikes(0);
+    setCurrentMatchDate(null);
+    setCurrentVenue(null);
     setSaving(true);
     await Promise.all([
       supabase.from('team_reactions').delete().eq('teams_id', 'current'),
@@ -391,6 +478,12 @@ export default function TeamsClient({ players, playerCount, unlocked, isAdmin, i
       }),
     ]);
     setSaving(false);
+  }
+
+  async function saveMatchInfo(matchDate: string | null, venue: string | null) {
+    setCurrentMatchDate(matchDate);
+    setCurrentVenue(venue);
+    await supabase.from('saved_teams').update({ match_date: matchDate, venue }).eq('id', 'current');
   }
 
   async function react(liked: boolean) {
@@ -487,6 +580,12 @@ export default function TeamsClient({ players, playerCount, unlocked, isAdmin, i
 
       {teams ? (
         <>
+          <MatchInfo
+            isAdmin={isAdmin}
+            matchDate={currentMatchDate}
+            venue={currentVenue}
+            onSave={saveMatchInfo}
+          />
           <TeamResults teams={teams} t={t} />
           {!generated && (
             <ReactionBar reaction={reaction} likes={likes} dislikes={dislikes} onReact={react} />
