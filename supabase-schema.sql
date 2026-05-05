@@ -53,18 +53,18 @@ select
   p.id,
   p.name,
   count(r.id) as rating_count,
-  round(avg(case when m.cnt < 3 or abs(r.speed       - m.med_speed)       <= 3 then r.speed       end)::numeric, 1) as speed,
-  round(avg(case when m.cnt < 3 or abs(r.agility     - m.med_agility)     <= 3 then r.agility     end)::numeric, 1) as agility,
-  round(avg(case when m.cnt < 3 or abs(r.passing     - m.med_passing)     <= 3 then r.passing     end)::numeric, 1) as passing,
-  round(avg(case when m.cnt < 3 or abs(r.shooting    - m.med_shooting)    <= 3 then r.shooting    end)::numeric, 1) as shooting,
-  round(avg(case when m.cnt < 3 or abs(r.defense     - m.med_defense)     <= 3 then r.defense     end)::numeric, 1) as defense,
-  round(avg(case when m.cnt < 3 or abs(r.goalkeeping - m.med_goalkeeping) <= 3 then r.goalkeeping end)::numeric, 1) as goalkeeping,
+  round(avg(case when m.cnt < 3 or abs(r.speed       - m.med_speed)       <= 4 then r.speed       end)::numeric, 1) as speed,
+  round(avg(case when m.cnt < 3 or abs(r.agility     - m.med_agility)     <= 4 then r.agility     end)::numeric, 1) as agility,
+  round(avg(case when m.cnt < 3 or abs(r.passing     - m.med_passing)     <= 4 then r.passing     end)::numeric, 1) as passing,
+  round(avg(case when m.cnt < 3 or abs(r.shooting    - m.med_shooting)    <= 4 then r.shooting    end)::numeric, 1) as shooting,
+  round(avg(case when m.cnt < 3 or abs(r.defense     - m.med_defense)     <= 4 then r.defense     end)::numeric, 1) as defense,
+  round(avg(case when m.cnt < 3 or abs(r.goalkeeping - m.med_goalkeeping) <= 4 then r.goalkeeping end)::numeric, 1) as goalkeeping,
   round((
-    avg(case when m.cnt < 3 or abs(r.speed    - m.med_speed)    <= 3 then r.speed    end) +
-    avg(case when m.cnt < 3 or abs(r.agility  - m.med_agility)  <= 3 then r.agility  end) +
-    avg(case when m.cnt < 3 or abs(r.passing  - m.med_passing)  <= 3 then r.passing  end) +
-    avg(case when m.cnt < 3 or abs(r.shooting - m.med_shooting) <= 3 then r.shooting end) +
-    avg(case when m.cnt < 3 or abs(r.defense  - m.med_defense)  <= 3 then r.defense  end)
+    avg(case when m.cnt < 3 or abs(r.speed    - m.med_speed)    <= 4 then r.speed    end) +
+    avg(case when m.cnt < 3 or abs(r.agility  - m.med_agility)  <= 4 then r.agility  end) +
+    avg(case when m.cnt < 3 or abs(r.passing  - m.med_passing)  <= 4 then r.passing  end) +
+    avg(case when m.cnt < 3 or abs(r.shooting - m.med_shooting) <= 4 then r.shooting end) +
+    avg(case when m.cnt < 3 or abs(r.defense  - m.med_defense)  <= 4 then r.defense  end)
   ) / 5, 1) as overall
 from profiles p
 left join ratings r on r.rated_id = p.id
