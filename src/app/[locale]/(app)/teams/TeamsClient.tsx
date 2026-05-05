@@ -46,6 +46,40 @@ function assignPositions(players: Player[]): PositionedPlayer[] {
   return result;
 }
 
+// ── Matchups ─────────────────────────────────────────────────────────────────
+
+const POS_ORDER: Position[] = ['FWD', 'MID', 'DEF', 'GK'];
+
+function Matchups({ teamA, teamB }: { teamA: PositionedPlayer[]; teamB: PositionedPlayer[] }) {
+  const rows = POS_ORDER.flatMap(pos => {
+    const a = teamA.filter(pp => pp.position === pos).map(pp => pp.player.name);
+    const b = teamB.filter(pp => pp.position === pos).map(pp => pp.player.name);
+    if (!a.length && !b.length) return [];
+    const len = Math.max(a.length, b.length);
+    const pairs = Array.from({ length: len }, (_, i) => [a[i] ?? '—', b[i] ?? '—'] as [string, string]);
+    return [{ pos, pairs }];
+  });
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 space-y-2">
+      {rows.map(({ pos, pairs }) => (
+        <div key={pos} className="flex items-start gap-3">
+          <span className="text-yellow-400 font-bold text-xs w-8 pt-0.5 flex-shrink-0">{pos}</span>
+          <div className="flex flex-col gap-1 flex-1">
+            {pairs.map(([a, b], i) => (
+              <div key={i} className="flex items-center gap-2 text-sm">
+                <span className="flex-1 text-blue-300 font-medium text-right truncate">{a}</span>
+                <span className="text-gray-600 text-xs flex-shrink-0">vs</span>
+                <span className="flex-1 text-red-300 font-medium truncate">{b}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ── Football pitch ────────────────────────────────────────────────────────────
 
 const POS_Y: Record<Position, number> = { GK: 84, DEF: 65, MID: 43, FWD: 19 };
@@ -275,19 +309,15 @@ export default function TeamsClient({ players, playerCount, unlocked }: TeamsCli
         {generated ? t('regenerate') : t('generateTeams')}
       </button>
 
-      {teams && (
+      {teams && (() => {
+        const posA = assignPositions(teams.teamA);
+        const posB = assignPositions(teams.teamB);
+        return (
         <div className="space-y-4">
+          <Matchups teamA={posA} teamB={posB} />
           <div className="grid grid-cols-2 gap-3">
-            <FootballPitch
-              positionedPlayers={assignPositions(teams.teamA)}
-              color="blue"
-              title={t('teamA')}
-            />
-            <FootballPitch
-              positionedPlayers={assignPositions(teams.teamB)}
-              color="red"
-              title={t('teamB')}
-            />
+            <FootballPitch positionedPlayers={posA} color="blue" title={t('teamA')} />
+            <FootballPitch positionedPlayers={posB} color="red" title={t('teamB')} />
           </div>
 
           {teams.unassigned.length > 0 && (
@@ -306,7 +336,8 @@ export default function TeamsClient({ players, playerCount, unlocked }: TeamsCli
             </div>
           )}
         </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
