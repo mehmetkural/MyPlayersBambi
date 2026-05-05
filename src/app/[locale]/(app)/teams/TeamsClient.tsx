@@ -151,7 +151,7 @@ function FootballPitch({ positionedPlayers, color, title }: {
   for (const pos of ['GK', 'DEF', 'MID', 'FWD'] as Position[]) {
     const g = groups[pos];
     g.forEach((p, i) => {
-      const pad = 14;
+      const pad = g.length === 2 ? 28 : 14;
       const x = g.length === 1 ? 50 : pad + (i * (100 - 2 * pad)) / (g.length - 1);
       dots.push({ player: p, position: pos, x, y: POS_Y[pos] });
     });
