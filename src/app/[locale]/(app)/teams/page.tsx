@@ -7,11 +7,12 @@ export default async function TeamsPage() {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  const [{ data: players, count }, { data: profiles }, { data: savedTeams }, { count: ratedCount }] = await Promise.all([
+  const [{ data: players, count }, { data: profiles }, { data: savedTeams }, { count: ratedCount }, { data: reactions }] = await Promise.all([
     supabase.from('player_scores').select('*', { count: 'exact' }),
     supabase.from('profiles').select('id, positions, is_admin'),
     supabase.from('saved_teams').select('*').eq('id', 'current').maybeSingle(),
     supabase.from('ratings').select('id', { count: 'exact', head: true }).eq('rater_id', user!.id),
+    supabase.from('team_reactions').select('user_id, liked').eq('teams_id', 'current'),
   ]);
 
   const posMap = new Map((profiles ?? []).map(p => [p.id, p.positions ?? []]));
@@ -22,7 +23,6 @@ export default async function TeamsPage() {
 
   const playerCount = count ?? 0;
   const unlocked = playerCount >= MIN_PLAYERS_FOR_TEAMS;
-  // -1 because user doesn't rate themselves
   const hasRatedAll = (ratedCount ?? 0) >= playerCount - 1;
 
   const initialTeams = savedTeams ? {
@@ -30,6 +30,11 @@ export default async function TeamsPage() {
     teamBIds: savedTeams.team_b_ids as string[],
     unassignedIds: savedTeams.unassigned_ids as string[],
   } : null;
+
+  const reactionList = reactions ?? [];
+  const myReaction = reactionList.find(r => r.user_id === user!.id)?.liked ?? null;
+  const likeCount = reactionList.filter(r => r.liked).length;
+  const dislikeCount = reactionList.filter(r => !r.liked).length;
 
   return (
     <TeamsClient
@@ -39,6 +44,9 @@ export default async function TeamsPage() {
       isAdmin={isAdmin}
       initialTeams={initialTeams}
       hasRatedAll={hasRatedAll}
+      myReaction={myReaction}
+      likeCount={likeCount}
+      dislikeCount={dislikeCount}
     />
   );
 }

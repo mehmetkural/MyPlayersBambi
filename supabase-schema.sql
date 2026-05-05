@@ -89,3 +89,16 @@ create policy "saved_teams_select" on saved_teams for select using (true);
 create policy "saved_teams_write" on saved_teams for all using (
   exists (select 1 from profiles where id = auth.uid() and is_admin = true)
 );
+
+-- 5. Team reactions (like/dislike per user for current teams)
+create table team_reactions (
+  user_id  uuid references profiles(id) on delete cascade,
+  teams_id text references saved_teams(id) on delete cascade,
+  liked    boolean not null,
+  created_at timestamptz default now(),
+  primary key (user_id, teams_id)
+);
+
+alter table team_reactions enable row level security;
+create policy "reactions_select" on team_reactions for select using (true);
+create policy "reactions_write" on team_reactions for all using (auth.uid() = user_id);

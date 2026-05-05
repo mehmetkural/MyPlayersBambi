@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { balanceTeams, TEAM_FORMATS, MIN_PLAYERS_FOR_TEAMS, type Player } from '@/lib/utils';
 import { cn } from '@/lib/utils';
-import { Users, Lock, RefreshCw, Star } from 'lucide-react';
+import { Users, Lock, RefreshCw, Star, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Link } from '@/i18n/navigation';
 
@@ -135,6 +135,62 @@ function TeamResults({ teams, t }: { teams: ReturnType<typeof balanceTeams>; t: 
   );
 }
 
+// ── Reaction bar ─────────────────────────────────────────────────────────────
+
+function ReactionBar({ reaction, likes, dislikes, onReact }: {
+  reaction: boolean | null;
+  likes: number;
+  dislikes: number;
+  onReact: (liked: boolean) => void;
+}) {
+  const total = likes + dislikes;
+  const pct = total === 0 ? null : Math.round((likes / total) * 100);
+
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 mt-4">
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => onReact(true)}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all',
+            reaction === true
+              ? 'bg-green-500 text-white'
+              : 'bg-gray-800 text-gray-400 hover:text-green-400 hover:bg-gray-700'
+          )}
+        >
+          <ThumbsUp size={16} />
+          <span>{likes}</span>
+        </button>
+
+        <button
+          onClick={() => onReact(false)}
+          className={cn(
+            'flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all',
+            reaction === false
+              ? 'bg-red-500 text-white'
+              : 'bg-gray-800 text-gray-400 hover:text-red-400 hover:bg-gray-700'
+          )}
+        >
+          <ThumbsDown size={16} />
+          <span>{dislikes}</span>
+        </button>
+
+        {pct !== null && (
+          <div className="flex-1 flex items-center gap-2">
+            <div className="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-green-500 rounded-full transition-all duration-300"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+            <span className="text-sm font-semibold text-gray-300 w-10 text-right">%{pct}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── Football pitch ────────────────────────────────────────────────────────────
 
 const POS_Y: Record<Position, number> = { GK: 84, DEF: 65, MID: 43, FWD: 19 };
@@ -241,9 +297,12 @@ interface TeamsClientProps {
   isAdmin: boolean;
   initialTeams: { teamAIds: string[]; teamBIds: string[]; unassignedIds: string[] } | null;
   hasRatedAll: boolean;
+  myReaction: boolean | null;
+  likeCount: number;
+  dislikeCount: number;
 }
 
-export default function TeamsClient({ players, playerCount, unlocked, isAdmin, initialTeams, hasRatedAll }: TeamsClientProps) {
+export default function TeamsClient({ players, playerCount, unlocked, isAdmin, initialTeams, hasRatedAll, myReaction, likeCount, dislikeCount }: TeamsClientProps) {
   const t = useTranslations('teams');
   const supabase = createClient();
 
@@ -254,6 +313,10 @@ export default function TeamsClient({ players, playerCount, unlocked, isAdmin, i
   const [generated, setGenerated] = useState(false);
   const [saving, setSaving] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set(players.map(p => p.id)));
+
+  const [reaction, setReaction] = useState<boolean | null>(myReaction);
+  const [likes, setLikes] = useState(likeCount);
+  const [dislikes, setDislikes] = useState(dislikeCount);
 
   function togglePlayer(id: string) {
     setSelectedIds(prev => {
@@ -313,15 +376,40 @@ export default function TeamsClient({ players, playerCount, unlocked, isAdmin, i
     const newTeams = balanceTeams(activePlayers, format);
     setTeams(newTeams);
     setGenerated(true);
+    setReaction(null);
+    setLikes(0);
+    setDislikes(0);
     setSaving(true);
-    await supabase.from('saved_teams').upsert({
-      id: 'current',
-      team_a_ids: newTeams.teamA.map(p => p.id),
-      team_b_ids: newTeams.teamB.map(p => p.id),
-      unassigned_ids: newTeams.unassigned.map(p => p.id),
-      updated_at: new Date().toISOString(),
-    });
+    await Promise.all([
+      supabase.from('team_reactions').delete().eq('teams_id', 'current'),
+      supabase.from('saved_teams').upsert({
+        id: 'current',
+        team_a_ids: newTeams.teamA.map(p => p.id),
+        team_b_ids: newTeams.teamB.map(p => p.id),
+        unassigned_ids: newTeams.unassigned.map(p => p.id),
+        updated_at: new Date().toISOString(),
+      }),
+    ]);
     setSaving(false);
+  }
+
+  async function react(liked: boolean) {
+    const prev = reaction;
+    const wasLiked = prev === true;
+    const wasDisliked = prev === false;
+
+    if (prev === liked) {
+      // toggle off
+      setReaction(null);
+      setLikes(l => liked ? l - 1 : l);
+      setDislikes(d => !liked ? d - 1 : d);
+      await supabase.from('team_reactions').delete().eq('teams_id', 'current').eq('user_id', (await supabase.auth.getUser()).data.user!.id);
+    } else {
+      setReaction(liked);
+      setLikes(l => liked ? l + 1 : wasLiked ? l - 1 : l);
+      setDislikes(d => !liked ? d + 1 : wasDisliked ? d - 1 : d);
+      await supabase.from('team_reactions').upsert({ teams_id: 'current', liked }, { onConflict: 'user_id,teams_id' });
+    }
   }
 
   return (
@@ -397,12 +485,16 @@ export default function TeamsClient({ players, playerCount, unlocked, isAdmin, i
         </>
       )}
 
-      {teams
-        ? <TeamResults teams={teams} t={t} />
-        : !isAdmin && (
-          <p className="text-gray-500 text-center py-12">{t('noTeamsYet')}</p>
-        )
-      }
+      {teams ? (
+        <>
+          <TeamResults teams={teams} t={t} />
+          {!generated && (
+            <ReactionBar reaction={reaction} likes={likes} dislikes={dislikes} onReact={react} />
+          )}
+        </>
+      ) : !isAdmin && (
+        <p className="text-gray-500 text-center py-12">{t('noTeamsYet')}</p>
+      )}
     </div>
   );
 }
