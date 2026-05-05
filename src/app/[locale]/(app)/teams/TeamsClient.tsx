@@ -40,7 +40,6 @@ function assignPositions(players: Player[]): PositionedPlayer[] {
     result.push(...pool.splice(0, count).map(p => ({ player: p, position: pos })));
   }
 
-  pick('GK', 'goalkeeping', 1);
   pick('DEF', 'defense', numDef);
   pick('FWD', 'shooting', numFwd);
   pool.forEach(p => result.push({ player: p, position: 'MID' }));
