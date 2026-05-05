@@ -53,6 +53,7 @@ export default async function TeamsPage() {
       likeCount={likeCount}
       dislikeCount={dislikeCount}
       matchInfo={matchInfo}
+      userId={user!.id}
     />
   );
 }

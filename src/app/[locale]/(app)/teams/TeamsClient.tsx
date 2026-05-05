@@ -383,9 +383,10 @@ interface TeamsClientProps {
   likeCount: number;
   dislikeCount: number;
   matchInfo: { matchDate: string | null; venue: string | null };
+  userId: string;
 }
 
-export default function TeamsClient({ players, playerCount, unlocked, isAdmin, initialTeams, hasRatedAll, myReaction, likeCount, dislikeCount, matchInfo }: TeamsClientProps) {
+export default function TeamsClient({ players, playerCount, unlocked, isAdmin, initialTeams, hasRatedAll, myReaction, likeCount, dislikeCount, matchInfo, userId }: TeamsClientProps) {
   const t = useTranslations('teams');
   const supabase = createClient();
 
@@ -492,16 +493,18 @@ export default function TeamsClient({ players, playerCount, unlocked, isAdmin, i
     const wasDisliked = prev === false;
 
     if (prev === liked) {
-      // toggle off
       setReaction(null);
       setLikes(l => liked ? l - 1 : l);
       setDislikes(d => !liked ? d - 1 : d);
-      await supabase.from('team_reactions').delete().eq('teams_id', 'current').eq('user_id', (await supabase.auth.getUser()).data.user!.id);
+      await supabase.from('team_reactions').delete().eq('teams_id', 'current').eq('user_id', userId);
     } else {
       setReaction(liked);
       setLikes(l => liked ? l + 1 : wasLiked ? l - 1 : l);
       setDislikes(d => !liked ? d + 1 : wasDisliked ? d - 1 : d);
-      await supabase.from('team_reactions').upsert({ teams_id: 'current', liked }, { onConflict: 'user_id,teams_id' });
+      await supabase.from('team_reactions').upsert(
+        { user_id: userId, teams_id: 'current', liked },
+        { onConflict: 'user_id,teams_id' }
+      );
     }
   }
 
