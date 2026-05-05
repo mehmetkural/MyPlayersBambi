@@ -33,23 +33,42 @@ create policy "ratings_insert" on ratings for insert with check (auth.uid() = ra
 create policy "ratings_upsert" on ratings for update using (auth.uid() = rater_id);
 
 -- 3. View: aggregated player scores
+-- Outlier detection: per-attribute ratings that deviate >3 points from the median
+-- are excluded when a player has at least 3 ratings (manipulation guard).
 create or replace view player_scores as
+with medians as (
+  select
+    rated_id,
+    count(*) as cnt,
+    percentile_cont(0.5) within group (order by speed)       as med_speed,
+    percentile_cont(0.5) within group (order by agility)     as med_agility,
+    percentile_cont(0.5) within group (order by passing)     as med_passing,
+    percentile_cont(0.5) within group (order by shooting)    as med_shooting,
+    percentile_cont(0.5) within group (order by defense)     as med_defense,
+    percentile_cont(0.5) within group (order by goalkeeping) as med_goalkeeping
+  from ratings
+  group by rated_id
+)
 select
   p.id,
   p.name,
   count(r.id) as rating_count,
-  round(avg(r.speed)::numeric, 1) as speed,
-  round(avg(r.agility)::numeric, 1) as agility,
-  round(avg(r.passing)::numeric, 1) as passing,
-  round(avg(r.shooting)::numeric, 1) as shooting,
-  round(avg(r.defense)::numeric, 1) as defense,
-  round(avg(r.goalkeeping)::numeric, 1) as goalkeeping,
-  round(
-    (avg(r.speed) + avg(r.agility) + avg(r.passing) + avg(r.shooting) + avg(r.defense)) / 5,
-    1
-  ) as overall
+  round(avg(case when m.cnt < 3 or abs(r.speed       - m.med_speed)       <= 3 then r.speed       end)::numeric, 1) as speed,
+  round(avg(case when m.cnt < 3 or abs(r.agility     - m.med_agility)     <= 3 then r.agility     end)::numeric, 1) as agility,
+  round(avg(case when m.cnt < 3 or abs(r.passing     - m.med_passing)     <= 3 then r.passing     end)::numeric, 1) as passing,
+  round(avg(case when m.cnt < 3 or abs(r.shooting    - m.med_shooting)    <= 3 then r.shooting    end)::numeric, 1) as shooting,
+  round(avg(case when m.cnt < 3 or abs(r.defense     - m.med_defense)     <= 3 then r.defense     end)::numeric, 1) as defense,
+  round(avg(case when m.cnt < 3 or abs(r.goalkeeping - m.med_goalkeeping) <= 3 then r.goalkeeping end)::numeric, 1) as goalkeeping,
+  round((
+    avg(case when m.cnt < 3 or abs(r.speed    - m.med_speed)    <= 3 then r.speed    end) +
+    avg(case when m.cnt < 3 or abs(r.agility  - m.med_agility)  <= 3 then r.agility  end) +
+    avg(case when m.cnt < 3 or abs(r.passing  - m.med_passing)  <= 3 then r.passing  end) +
+    avg(case when m.cnt < 3 or abs(r.shooting - m.med_shooting) <= 3 then r.shooting end) +
+    avg(case when m.cnt < 3 or abs(r.defense  - m.med_defense)  <= 3 then r.defense  end)
+  ) / 5, 1) as overall
 from profiles p
 left join ratings r on r.rated_id = p.id
+left join medians m on m.rated_id = p.id
 group by p.id, p.name;
 
 -- Grant view access
