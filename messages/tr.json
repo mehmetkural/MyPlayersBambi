@@ -74,7 +74,10 @@
     "thisWeek": "Bu hafta oynayacaklar",
     "selectAll": "Tümünü seç",
     "clearAll": "Temizle",
-    "noTeamsYet": "Henüz takım oluşturulmadı."
+    "noTeamsYet": "Henüz takım oluşturulmadı.",
+    "rateFirstTitle": "Önce herkesi puanla",
+    "rateFirstDesc": "Takımları görebilmek için tüm oyuncuları puanlamış olman gerekiyor.",
+    "rateFirstAction": "Puanlama ekranına git"
   },
   "preferences": {
     "title": "Tercihlerim",

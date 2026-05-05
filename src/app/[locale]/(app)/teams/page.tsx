@@ -7,10 +7,11 @@ export default async function TeamsPage() {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  const [{ data: players, count }, { data: profiles }, { data: savedTeams }] = await Promise.all([
+  const [{ data: players, count }, { data: profiles }, { data: savedTeams }, { count: ratedCount }] = await Promise.all([
     supabase.from('player_scores').select('*', { count: 'exact' }),
     supabase.from('profiles').select('id, positions, is_admin'),
     supabase.from('saved_teams').select('*').eq('id', 'current').maybeSingle(),
+    supabase.from('ratings').select('id', { count: 'exact', head: true }).eq('rater_id', user!.id),
   ]);
 
   const posMap = new Map((profiles ?? []).map(p => [p.id, p.positions ?? []]));
@@ -21,6 +22,8 @@ export default async function TeamsPage() {
 
   const playerCount = count ?? 0;
   const unlocked = playerCount >= MIN_PLAYERS_FOR_TEAMS;
+  // -1 because user doesn't rate themselves
+  const hasRatedAll = (ratedCount ?? 0) >= playerCount - 1;
 
   const initialTeams = savedTeams ? {
     teamAIds: savedTeams.team_a_ids as string[],
@@ -35,6 +38,7 @@ export default async function TeamsPage() {
       unlocked={unlocked}
       isAdmin={isAdmin}
       initialTeams={initialTeams}
+      hasRatedAll={hasRatedAll}
     />
   );
 }

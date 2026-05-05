@@ -74,7 +74,10 @@
     "thisWeek": "Playing this week",
     "selectAll": "Select all",
     "clearAll": "Clear",
-    "noTeamsYet": "No teams generated yet."
+    "noTeamsYet": "No teams generated yet.",
+    "rateFirstTitle": "Rate everyone first",
+    "rateFirstDesc": "You need to rate all players before you can see the teams.",
+    "rateFirstAction": "Go to ratings"
   },
   "preferences": {
     "title": "My Preferences",

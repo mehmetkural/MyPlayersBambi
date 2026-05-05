@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { balanceTeams, TEAM_FORMATS, MIN_PLAYERS_FOR_TEAMS, type Player } from '@/lib/utils';
 import { cn } from '@/lib/utils';
-import { Users, Lock, RefreshCw } from 'lucide-react';
+import { Users, Lock, RefreshCw, Star } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { Link } from '@/i18n/navigation';
 
 // ── Position assignment ──────────────────────────────────────────────────────
 
@@ -231,9 +232,10 @@ interface TeamsClientProps {
   unlocked: boolean;
   isAdmin: boolean;
   initialTeams: { teamAIds: string[]; teamBIds: string[]; unassignedIds: string[] } | null;
+  hasRatedAll: boolean;
 }
 
-export default function TeamsClient({ players, playerCount, unlocked, isAdmin, initialTeams }: TeamsClientProps) {
+export default function TeamsClient({ players, playerCount, unlocked, isAdmin, initialTeams, hasRatedAll }: TeamsClientProps) {
   const t = useTranslations('teams');
   const supabase = createClient();
 
@@ -256,6 +258,25 @@ export default function TeamsClient({ players, playerCount, unlocked, isAdmin, i
   }
 
   const activePlayers = players.filter(p => selectedIds.has(p.id));
+
+  if (!isAdmin && !hasRatedAll) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-6 flex flex-col items-center justify-center min-h-[60vh] text-center">
+        <div className="w-20 h-20 rounded-full bg-yellow-500/10 flex items-center justify-center mb-4">
+          <Star size={36} className="text-yellow-400" />
+        </div>
+        <h2 className="text-xl font-bold text-white mb-2">{t('rateFirstTitle')}</h2>
+        <p className="text-gray-400 mb-6">{t('rateFirstDesc')}</p>
+        <Link
+          href="/rate"
+          className="flex items-center gap-2 bg-green-500 hover:bg-green-400 text-white font-semibold px-6 py-3 rounded-xl transition-colors"
+        >
+          <Star size={16} />
+          {t('rateFirstAction')}
+        </Link>
+      </div>
+    );
+  }
 
   if (isAdmin && !unlocked) {
     return (

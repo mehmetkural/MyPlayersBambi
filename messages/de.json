@@ -74,7 +74,10 @@
     "thisWeek": "Diese Woche spielend",
     "selectAll": "Alle auswählen",
     "clearAll": "Leeren",
-    "noTeamsYet": "Noch keine Teams erstellt."
+    "noTeamsYet": "Noch keine Teams erstellt.",
+    "rateFirstTitle": "Zuerst alle bewerten",
+    "rateFirstDesc": "Du musst alle Spieler bewertet haben, bevor du die Teams sehen kannst.",
+    "rateFirstAction": "Zur Bewertung"
   },
   "preferences": {
     "title": "Meine Präferenzen",
