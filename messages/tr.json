@@ -4,6 +4,7 @@
     "leaderboard": "Sıralama",
     "teams": "Takımlar",
     "preferences": "Tercihlerim",
+    "selfrate": "Kendini Puanla",
     "signOut": "Çıkış"
   },
   "auth": {
@@ -92,6 +93,31 @@
     "noneYet": "Henüz tercih eklenmemiş.",
     "save": "Kaydet",
     "saved": "Kaydedildi!"
+  },
+  "selfrate": {
+    "title": "Kendini Puanla",
+    "subtitle": "Kendi özelliklerini değerlendir, takım kurma bu puanlara göre yapılır",
+    "save": "Puanı Kaydet",
+    "update": "Güncelle",
+    "saving": "Kaydediliyor...",
+    "flashSaved": "Kaydedildi!",
+    "flashError": "Bir hata oluştu.",
+    "teamsTitle": "Kendini Puanla Takımları",
+    "teamsSubtitle": "Kendi puanlarına ve tercihlerine göre oluşturulan dengeli takımlar",
+    "rateYourselfFirst": "Önce kendini puanla",
+    "rateYourselfFirstDesc": "Takımları görebilmek için önce kendi puanlarını girmen gerekiyor.",
+    "noTeamsYet": "Henüz takım oluşturulmadı.",
+    "thisWeek": "Bu hafta oynayacaklar",
+    "selectAll": "Tümünü seç",
+    "clearAll": "Temizle",
+    "format": "Format Seç",
+    "generateTeams": "Takımları Oluştur",
+    "regenerate": "Yeniden Oluştur",
+    "teamA": "Takım A",
+    "teamB": "Takım B",
+    "unassigned": "Atanmamış",
+    "lockedTitle": "Yeterli oyuncu yok",
+    "lockedDesc": "Bu özellik en az {count} oyuncu kendini puanladığında açılır."
   },
   "common": {
     "appName": "MyPlayers"

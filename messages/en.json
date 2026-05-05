@@ -4,6 +4,7 @@
     "leaderboard": "Leaderboard",
     "teams": "Teams",
     "preferences": "My Prefs",
+    "selfrate": "Rate Yourself",
     "signOut": "Sign Out"
   },
   "auth": {
@@ -92,6 +93,31 @@
     "noneYet": "No preferences saved yet.",
     "save": "Save",
     "saved": "Saved!"
+  },
+  "selfrate": {
+    "title": "Rate Yourself",
+    "subtitle": "Assess your own skills — teams will be built from these scores",
+    "save": "Save Rating",
+    "update": "Update",
+    "saving": "Saving...",
+    "flashSaved": "Saved!",
+    "flashError": "Something went wrong.",
+    "teamsTitle": "Self-Rated Teams",
+    "teamsSubtitle": "Balanced teams built from self-ratings and position preferences",
+    "rateYourselfFirst": "Rate yourself first",
+    "rateYourselfFirstDesc": "You need to save your own rating before you can see the teams.",
+    "noTeamsYet": "No teams generated yet.",
+    "thisWeek": "Playing this week",
+    "selectAll": "Select all",
+    "clearAll": "Clear",
+    "format": "Select Format",
+    "generateTeams": "Generate Teams",
+    "regenerate": "Regenerate",
+    "teamA": "Team A",
+    "teamB": "Team B",
+    "unassigned": "Unassigned",
+    "lockedTitle": "Not enough players",
+    "lockedDesc": "This feature unlocks when at least {count} players have rated themselves."
   },
   "common": {
     "appName": "MyPlayers"

@@ -4,6 +4,7 @@
     "leaderboard": "Rangliste",
     "teams": "Teams",
     "preferences": "Präferenzen",
+    "selfrate": "Selbst bewerten",
     "signOut": "Abmelden"
   },
   "auth": {
@@ -92,6 +93,31 @@
     "noneYet": "Noch keine Präferenzen gespeichert.",
     "save": "Speichern",
     "saved": "Gespeichert!"
+  },
+  "selfrate": {
+    "title": "Selbst bewerten",
+    "subtitle": "Bewerte deine eigenen Fähigkeiten — Teams werden anhand dieser Werte erstellt",
+    "save": "Bewertung speichern",
+    "update": "Aktualisieren",
+    "saving": "Speichern...",
+    "flashSaved": "Gespeichert!",
+    "flashError": "Etwas ist schiefgelaufen.",
+    "teamsTitle": "Selbstbewertungs-Teams",
+    "teamsSubtitle": "Ausgeglichene Teams basierend auf Selbstbewertungen und Positionspräferenzen",
+    "rateYourselfFirst": "Zuerst dich selbst bewerten",
+    "rateYourselfFirstDesc": "Du musst deine eigene Bewertung speichern, bevor du die Teams sehen kannst.",
+    "noTeamsYet": "Noch keine Teams erstellt.",
+    "thisWeek": "Diese Woche spielend",
+    "selectAll": "Alle auswählen",
+    "clearAll": "Leeren",
+    "format": "Format wählen",
+    "generateTeams": "Teams erstellen",
+    "regenerate": "Neu erstellen",
+    "teamA": "Team A",
+    "teamB": "Team B",
+    "unassigned": "Nicht zugeteilt",
+    "lockedTitle": "Nicht genug Spieler",
+    "lockedDesc": "Diese Funktion wird freigeschaltet, wenn mindestens {count} Spieler sich selbst bewertet haben."
   },
   "common": {
     "appName": "MyPlayers"

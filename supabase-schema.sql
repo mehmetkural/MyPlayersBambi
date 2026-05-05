@@ -104,3 +104,47 @@ create table team_reactions (
 alter table team_reactions enable row level security;
 create policy "reactions_select" on team_reactions for select using (true);
 create policy "reactions_write" on team_reactions for all using (auth.uid() = user_id);
+
+-- 6. Self ratings (each user rates themselves)
+create table self_ratings (
+  user_id uuid references profiles(id) on delete cascade primary key,
+  speed int not null check (speed between 1 and 10),
+  agility int not null check (agility between 1 and 10),
+  passing int not null check (passing between 1 and 10),
+  shooting int not null check (shooting between 1 and 10),
+  defense int not null check (defense between 1 and 10),
+  goalkeeping int not null check (goalkeeping between 1 and 10),
+  updated_at timestamptz default now()
+);
+
+alter table self_ratings enable row level security;
+create policy "self_ratings_select" on self_ratings for select using (true);
+create policy "self_ratings_write" on self_ratings for all using (auth.uid() = user_id);
+
+-- 7. Saved self-rated teams (admin-generated from self ratings)
+create table saved_self_teams (
+  id text primary key,
+  team_a_ids uuid[] not null,
+  team_b_ids uuid[] not null,
+  unassigned_ids uuid[] not null default '{}',
+  updated_at timestamptz default now()
+);
+
+alter table saved_self_teams enable row level security;
+create policy "saved_self_teams_select" on saved_self_teams for select using (true);
+create policy "saved_self_teams_write" on saved_self_teams for all using (
+  exists (select 1 from profiles where id = auth.uid() and is_admin = true)
+);
+
+-- 8. Self team reactions
+create table self_team_reactions (
+  user_id uuid references profiles(id) on delete cascade,
+  teams_id text references saved_self_teams(id) on delete cascade,
+  liked boolean not null,
+  created_at timestamptz default now(),
+  primary key (user_id, teams_id)
+);
+
+alter table self_team_reactions enable row level security;
+create policy "self_reactions_select" on self_team_reactions for select using (true);
+create policy "self_reactions_write" on self_team_reactions for all using (auth.uid() = user_id);
