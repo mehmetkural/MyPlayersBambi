@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { MIN_PLAYERS_FOR_TEAMS } from '@/lib/utils';
-import { Users, Star, Trophy, LogOut, Globe, SlidersHorizontal } from 'lucide-react';
+import { Users, Star, LogOut, Globe, SlidersHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from '@/i18n/navigation';
 
@@ -25,7 +25,7 @@ export default function Navbar({ playerCount, isAdmin, userName }: NavbarProps) 
   const pathname = usePathname();
   const router = useRouter();
   const locale = pathname.split('/')[1];
-  const currentTab = pathname.split('/')[2] || 'leaderboard';
+  const currentTab = pathname.split('/')[2] || 'rate';
   const teamsUnlocked = playerCount >= MIN_PLAYERS_FOR_TEAMS;
 
   const supabase = createClient();
@@ -46,14 +46,13 @@ export default function Navbar({ playerCount, isAdmin, userName }: NavbarProps) 
     { key: 'rate', label: t('rate'), icon: Star, href: '/rate' },
     { key: 'preferences', label: t('preferences'), icon: SlidersHorizontal, href: '/preferences' },
     { key: 'teams', label: t('teams'), icon: Users, href: '/teams', locked: !teamsUnlocked },
-    ...(isAdmin ? [{ key: 'leaderboard', label: t('leaderboard'), icon: Trophy, href: '/leaderboard', locked: false }] : []),
   ];
 
   return (
     <>
       {/* Desktop top bar */}
       <header className="hidden md:flex items-center justify-between px-6 py-4 bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
-        <Link href="/leaderboard" className="flex items-center gap-2">
+        <Link href="/rate" className="flex items-center gap-2">
           <span className="text-xl">⚽</span>
           <span className="font-bold text-white text-lg">MyPlayers</span>
         </Link>
