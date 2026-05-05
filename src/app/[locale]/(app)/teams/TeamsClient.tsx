@@ -87,12 +87,12 @@ function TeamResults({ teams, t }: { teams: ReturnType<typeof balanceTeams>; t: 
   const posB = assignPositions(teams.teamB);
   return (
     <div className="space-y-4">
+      <Matchups teamA={posA} teamB={posB} />
+
       <div className="grid grid-cols-2 gap-3">
         <FootballPitch positionedPlayers={posA} color="blue" title={t('teamA')} />
         <FootballPitch positionedPlayers={posB} color="red" title={t('teamB')} />
       </div>
-
-      <Matchups teamA={posA} teamB={posB} />
 
       {teams.unassigned.length > 0 && (
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
